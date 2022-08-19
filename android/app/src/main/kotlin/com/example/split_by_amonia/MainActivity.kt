@@ -1,4 +1,4 @@
-package amonia.games.amonia_game
+package com.example.split_by_amonia
 
 import io.flutter.embedding.android.FlutterActivity
 

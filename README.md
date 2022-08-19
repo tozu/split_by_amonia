@@ -1,4 +1,4 @@
-# amonia_game
+# split_by_amonia
 
 A new Flutter project.
 

@@ -1,6 +1,6 @@
 {
-    "name": "amonia_game",
-    "short_name": "amonia_game",
+    "name": "split_by_amonia",
+    "short_name": "split_by_amonia",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

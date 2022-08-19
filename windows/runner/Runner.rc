@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "amonia.games" "\0"
-            VALUE "FileDescription", "amonia_game" "\0"
+            VALUE "CompanyName", "com.example" "\0"
+            VALUE "FileDescription", "split_by_amonia" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "amonia_game" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 amonia.games. All rights reserved." "\0"
-            VALUE "OriginalFilename", "amonia_game.exe" "\0"
-            VALUE "ProductName", "amonia_game" "\0"
+            VALUE "InternalName", "split_by_amonia" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "split_by_amonia.exe" "\0"
+            VALUE "ProductName", "split_by_amonia" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = amonia_game
+PRODUCT_NAME = split_by_amonia
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = amonia.games.amoniaGame
+PRODUCT_BUNDLE_IDENTIFIER = com.example.splitByAmonia
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2022 amonia.games. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2022 com.example. All rights reserved.
