@@ -6,8 +6,11 @@ import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/animation.dart';
+import 'package:split/component/PlayerBorder.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/square.dart';
+
+import '../my_game.dart';
 
 class PlayerSpritesPath {
   final String idle;
@@ -22,12 +25,15 @@ class PlayerSpritesPath {
 }
 
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
-    with CollisionCallbacks, ParentIsA<Maze> {
+    with CollisionCallbacks, ParentIsA<Maze>, HasGameRef<MyGame> {
   PlayerSpritesPath sprites;
   static const _playerSize = 10.0;
 
+  late PlayerBorder border;
+
   bool _crashing = false;
   bool winning = false;
+  bool _boarderReached = false;
 
   // Movement
   bool doMoveSouth = false;
@@ -57,7 +63,9 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   @override
   Future<void> onLoad() async {
     add(RectangleHitbox());
-
+    border = PlayerBorder(player: this);
+    parent.add(border);
+    // TODO: Boarderreached animation
     animations = {
       AnimationState.idle: SpriteAnimation.spriteList(
         await getSpriteList('${sprites.idle}[0-9]+.png'),
@@ -102,6 +110,9 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   void onCollisionStart(Set<Vector2> points, PositionComponent other) {
     super.onCollisionStart(points, other);
     // TODO(any): impl. proper class
+    if (other is PlayerBorder) {
+      _boarderReached = true;
+    }
     if (other is Wall) {
       _crashing = true;
     }
@@ -113,10 +124,17 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     if (active) {
       if (_crashing) {
         handleCrash();
+      } else if (_boarderReached) {
+        handleBoarder();
       } else {
         handleMovement();
       }
     }
+  }
+
+  void handleBoarder() {
+    position = oldPosition;
+    _boarderReached = false;
   }
 
   void handleCrash() {
@@ -226,6 +244,13 @@ class RealPlayer extends Player {
             crashing: 'playerCrashing',
           ),
         );
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    position.addListener(() {
+      gameRef.shadowPlayer.border.position = position;
+    });
+  }
 }
 
 class ShadowPlayer extends Player {
@@ -241,6 +266,13 @@ class ShadowPlayer extends Player {
             crashing: 'playerCrashing',
           ),
         );
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    position.addListener(() {
+      gameRef.realPlayer.border.position = position;
+    });
+  }
 }
 
 enum AnimationState { idle, moving, winning, crashing }

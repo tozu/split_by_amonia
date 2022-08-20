@@ -13,12 +13,11 @@ class MyGame extends FlameGame with HasTappables, KeyboardEvents {
 
   late Maze mazeOne;
   late Maze mazeTwo;
+  final realPlayer = RealPlayer();
+  final shadowPlayer = ShadowPlayer();
 
   @override
   Future<void> onLoad() async {
-    final realPlayer = RealPlayer();
-    final shadowPlayer = ShadowPlayer();
-
     // TODO(Tobias): extract into separate GameBoard class
     mazeOne = Maze(
       realPlayer,
