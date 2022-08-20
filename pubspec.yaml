@@ -16,3 +16,7 @@ dev_dependencies:
   flame_lint: ^0.1.2
   flutter_test:
     sdk: flutter
+
+flutter:
+  assets:
+    - assets/images/

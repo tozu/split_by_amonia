@@ -1,42 +1,29 @@
 import 'dart:ui';
 
-import 'package:flame/components.dart';
-import 'package:flame/palette.dart';
-import 'package:split/component/maze.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/palette.dart';
+import 'package:split/component/maze.dart';
 
-abstract class Player extends RectangleComponent with ParentIsA<Maze> {
-  static const _playerSize = 10.0;
+class PlayerSpritesPath {
+  final String idle;
+  final String moving;
+  final String crashing;
 
-  Player()
-      : super(
-          size: Vector2(_playerSize, _playerSize),
-          anchor: Anchor.center,
-        );
+  PlayerSpritesPath({
+    required this.idle,
+    required this.moving,
+    required this.crashing,
+  });
 }
 
-class RealPlayer extends Player {
-  @override
-  final Paint paint = BasicPalette.red.paint();
+abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
+    with CollisionCallbacks, ParentIsA<Maze> {
+  PlayerSpritesPath sprites;
 
-  RealPlayer();
-}
-
-class ShadowPlayer extends Player {
-  @override
-  final Paint paint = BasicPalette.blue.paint();
-
-  ShadowPlayer();
-}
-
-enum AnimationState { idle, moving, winning, crashing }
-
-class Player2 extends SpriteAnimationGroupComponent<AnimationState>
-    with CollisionCallbacks {
-  int speed = 100;
-  bool crashing = false;
+  final int _speed = 100;
+  bool _crashing = false;
   bool winning = false;
 
   // Movement
@@ -46,40 +33,48 @@ class Player2 extends SpriteAnimationGroupComponent<AnimationState>
   bool doMoveWest = false;
   bool moving = false;
 
-  //Facing
-  bool facingSouth = true;
-  bool facingEast = true;
+  // Facing
+  bool facingSouth = true; // otherwise is north
+  bool facingEast = true; // otherwise is west
 
-  //Previous position
+  // Previous position (for collision calculation)
   double xOld = 0;
   double yOld = 0;
 
-  Player() : super(current: AnimationState.idle);
+  Player(this.sprites)
+      : super(
+          current: AnimationState.idle,
+          anchor: Anchor.center,
+        );
 
   @override
   Future<void> onLoad() async {
-    add(
-      RectangleHitbox(),
-    );
+    add(RectangleHitbox());
 
     animations = {
       AnimationState.idle: SpriteAnimation.spriteList(
-        await getSpriteList('sprites/playerIdle[0-9]+.png'),
+        await getSpriteList('${sprites.idle}[0-9]+.png'),
         stepTime: 0.1,
       ),
       AnimationState.moving: SpriteAnimation.spriteList(
-        await getSpriteList('sprites/playerMoving[0-9]+.png'),
+        await getSpriteList('${sprites.moving}[0-9]+.png'),
         stepTime: 0.1,
       ),
       AnimationState.crashing: SpriteAnimation.spriteList(
-        await getSpriteList('sprites/playerCrashing[0-9]+.png'),
+        await getSpriteList('${sprites.crashing}[0-9]+.png'),
         stepTime: 0.1,
       ),
     };
   }
 
+  // TODO(any): extract to util class
   Future<List<Sprite>> getSpriteList(String pattern) async {
-    final imageList = await Flame.images.loadAllFromPattern(pattern);
+    final imageList = await Flame.images.loadAllFromPattern(
+      RegExp(
+        pattern,
+        caseSensitive: false,
+      ),
+    );
     final spriteList = imageList.map(Sprite.new).toList();
 
     return spriteList;
@@ -89,14 +84,14 @@ class Player2 extends SpriteAnimationGroupComponent<AnimationState>
   void onCollisionStart(Set<Vector2> points, PositionComponent other) {
     super.onCollisionStart(points, other);
     if (other is Wall) {
-      crashing = true;
+      _crashing = true;
     }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    if (crashing) {
+    if (_crashing) {
       handleCrash(dt);
     } else {
       handleMovement(dt);
@@ -106,7 +101,7 @@ class Player2 extends SpriteAnimationGroupComponent<AnimationState>
   void handleCrash(double dt) {
     position.x = xOld;
     position.y = yOld;
-    crashing = false;
+    _crashing = false;
   }
 
   void handleMovement(double dt) {
@@ -117,35 +112,35 @@ class Player2 extends SpriteAnimationGroupComponent<AnimationState>
         facingSouth = true;
       }
       yOld = position.y;
-      position.y -= speed * dt;
+      position.y -= _speed * dt;
     } else if (doMoveNorth) {
       if (facingSouth) {
         flipVertically();
         facingSouth = false;
       }
       yOld = position.y;
-      position.y -= speed * dt;
+      position.y -= _speed * dt;
     } else if (doMoveEast) {
       if (!facingEast) {
         flipHorizontally();
         facingEast = true;
       }
       xOld = position.x;
-      position.x += speed * dt;
+      position.x += _speed * dt;
     } else if (doMoveWest) {
       if (facingEast) {
         flipHorizontally();
         facingEast = false;
       }
       xOld = position.x;
-      position.x -= speed * dt;
+      position.x -= _speed * dt;
     } else {
       moving = false;
     }
   }
 
   void setAnimation() {
-    if (crashing) {
+    if (_crashing) {
       current = AnimationState.crashing;
     } else if (moving) {
       current = AnimationState.moving;
@@ -180,3 +175,36 @@ class Player2 extends SpriteAnimationGroupComponent<AnimationState>
     setAnimation();
   }
 }
+
+class RealPlayer extends Player {
+  @override
+  final Paint paint = BasicPalette.red.paint();
+
+  RealPlayer()
+      : super(
+          PlayerSpritesPath(
+            idle: 'playerCrashing',
+            moving: 'playerMoving',
+            crashing: 'playerCrashing',
+          ),
+        );
+}
+
+class ShadowPlayer extends Player {
+  @override
+  final Paint paint = BasicPalette.blue.paint();
+
+  ShadowPlayer()
+      : super(
+          // TODO(any): add sprites for shadow player
+          PlayerSpritesPath(
+            idle: 'playerCrashing',
+            moving: 'playerMoving',
+            crashing: 'playerCrashing',
+          ),
+        );
+}
+
+enum AnimationState { idle, moving, winning, crashing }
+
+class Wall {}
