@@ -35,15 +35,15 @@ class Player extends SpriteAnimationGroupComponent<AnimationState>
 
     animations = {
       AnimationState.idle: SpriteAnimation.spriteList(
-        await getSpriteList('playerIdle[0-9]+.png'),
+        await getSpriteList('sprites/playerIdle[0-9]+.png'),
         stepTime: 0.1,
       ),
       AnimationState.moving: SpriteAnimation.spriteList(
-        await getSpriteList('playerMoving[0-9]+.png'),
+        await getSpriteList('sprites/playerMoving[0-9]+.png'),
         stepTime: 0.1,
       ),
       AnimationState.crashing: SpriteAnimation.spriteList(
-        await getSpriteList('playerCrashing[0-9]+.png'),
+        await getSpriteList('sprites/playerCrashing[0-9]+.png'),
         stepTime: 0.1,
       ),
     };
