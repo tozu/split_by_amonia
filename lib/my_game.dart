@@ -1,7 +1,7 @@
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:split/component/gameboard.dart';
-import 'package:split/component/input_handler.dart';
+import 'package:split/handler/input_handler.dart';
 
 class MyGame extends FlameGame
     with
