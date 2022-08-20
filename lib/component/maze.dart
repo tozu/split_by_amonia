@@ -25,11 +25,11 @@ class Maze extends PositionComponent {
 
     for (var x = 0; x < mazeWidth; x++) {
       for (var y = 0; y < mazeHeight; y++) {
-        await add(Square(getPositionOf(x, y)));
+        await add(Square(_getPositionOf(x, y)));
       }
     }
 
-    player.position = getPositionOf(
+    player.position = _getPositionOf(
           (Maze.mazeWidth / 2).round(),
           Maze.mazeHeight - 1,
         )
@@ -39,7 +39,7 @@ class Maze extends PositionComponent {
     add(player);
   }
 
-  Vector2 getPositionOf(int x, int y) {
+  Vector2 _getPositionOf(int x, int y) {
     final xPixelGap = pixelGap * x;
     final yPixelGap = pixelGap * y;
 

@@ -2,9 +2,12 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
+import 'package:flutter/animation.dart';
 import 'package:split/component/maze.dart';
+import 'package:split/component/square.dart';
 
 class PlayerSpritesPath {
   final String idle;
@@ -23,7 +26,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   PlayerSpritesPath sprites;
   static const _playerSize = 10.0;
 
-  final int _speed = 100;
   bool _crashing = false;
   bool winning = false;
 
@@ -34,13 +36,12 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   bool doMoveWest = false;
   bool moving = false;
 
-  // Facing
+  // Facing direction (for sprites animation)
   bool facingSouth = true; // otherwise is north
   bool facingEast = true; // otherwise is west
 
   // Previous position (for collision calculation)
-  double xOld = 0;
-  double yOld = 0;
+  late Vector2 oldPosition;
 
   Player(this.sprites)
       : super(
@@ -67,6 +68,17 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
         stepTime: 0.1,
       ),
     };
+
+    children.register<MoveByEffect>();
+  }
+
+  void addEffectOnMove(Vector2 position) {
+    final effect = MoveByEffect(
+      position,
+      EffectController(duration: 0.5, curve: Curves.easeInOutQuart),
+    );
+
+    add(effect);
   }
 
   // TODO(any): extract to util class
@@ -85,6 +97,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   @override
   void onCollisionStart(Set<Vector2> points, PositionComponent other) {
     super.onCollisionStart(points, other);
+    // TODO(any): impl. proper class
     if (other is Wall) {
       _crashing = true;
     }
@@ -94,48 +107,57 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   void update(double dt) {
     super.update(dt);
     if (_crashing) {
-      handleCrash(dt);
+      handleCrash();
     } else {
-      handleMovement(dt);
+      handleMovement();
     }
   }
 
-  void handleCrash(double dt) {
-    position.x = xOld;
-    position.y = yOld;
+  void handleCrash() {
+    position = oldPosition;
     _crashing = false;
   }
 
-  void handleMovement(double dt) {
+  void handleMovement() {
+    oldPosition = position.clone();
+
     //maybe add some acceleration?
     if (doMoveSouth) {
       if (!facingSouth) {
         flipVertically();
         facingSouth = true;
       }
-      yOld = position.y;
-      position.y += _speed * dt;
+
+      // position.y += _speed * dt;
+      if (children.query<MoveByEffect>().isEmpty) {
+        addEffectOnMove(Vector2(0, Square.squareSize + Maze.pixelGap));
+      }
     } else if (doMoveNorth) {
       if (facingSouth) {
         flipVertically();
         facingSouth = false;
       }
-      yOld = position.y;
-      position.y -= _speed * dt;
+
+      if (children.query<MoveByEffect>().isEmpty) {
+        addEffectOnMove(Vector2(0, -(Square.squareSize + Maze.pixelGap)));
+      }
     } else if (doMoveEast) {
       if (!facingEast) {
         flipHorizontally();
         facingEast = true;
       }
-      xOld = position.x;
-      position.x += _speed * dt;
+      if (children.query<MoveByEffect>().isEmpty) {
+        addEffectOnMove(Vector2(Square.squareSize + Maze.pixelGap, 0));
+      }
     } else if (doMoveWest) {
       if (facingEast) {
         flipHorizontally();
         facingEast = false;
       }
-      xOld = position.x;
-      position.x -= _speed * dt;
+
+      if (children.query<MoveByEffect>().isEmpty) {
+        addEffectOnMove(Vector2(-(Square.squareSize + Maze.pixelGap), 0));
+      }
     } else {
       moving = false;
     }
@@ -148,7 +170,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       current = AnimationState.moving;
     } else if (winning) {
       current = AnimationState.winning;
-    } else if (current != AnimationState.crashing) {
+    } else {
       current = AnimationState.idle;
     }
   }
@@ -185,7 +207,7 @@ class RealPlayer extends Player {
   RealPlayer()
       : super(
           PlayerSpritesPath(
-            idle: 'playerCrashing',
+            idle: 'playerIdle',
             moving: 'playerMoving',
             crashing: 'playerCrashing',
           ),
@@ -200,7 +222,7 @@ class ShadowPlayer extends Player {
       : super(
           // TODO(any): add sprites for shadow player
           PlayerSpritesPath(
-            idle: 'playerCrashing',
+            idle: 'playerIdle',
             moving: 'playerMoving',
             crashing: 'playerCrashing',
           ),
