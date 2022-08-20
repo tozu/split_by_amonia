@@ -1,16 +1,23 @@
 import 'package:flame/game.dart';
 import 'package:split/component/maze.dart';
+import 'package:split/component/player.dart';
 
 class MyGame extends FlameGame with HasTappables {
+  final mazeOnePosition = Vector2(50, 50);
+  static const mazeGap = 10;
+
   @override
   Future<void> onLoad() async {
+    final realPlayer = RealPlayer();
+    final shadowPlayer = ShadowPlayer();
+
     // TODO(Tobias): extract into separate GameBoard class
-    final mazeOnePosition = Vector2(50, 50);
-
-    const mazeGap = 10;
-
-    final mazeOne = Maze(position: mazeOnePosition);
+    final mazeOne = Maze(
+      realPlayer,
+      position: mazeOnePosition,
+    );
     final mazeTwo = Maze(
+      shadowPlayer,
       position: Vector2(mazeOnePosition.x + mazeOne.width + mazeGap, 50),
     );
 

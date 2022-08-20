@@ -1,13 +1,16 @@
 import 'package:flame/components.dart';
+import 'package:split/component/player.dart';
 import 'package:split/component/square.dart';
 
-class Maze extends PositionComponent with HasGameRef {
+class Maze extends PositionComponent {
   static const int mazeWidth = 31;
   static const int mazeHeight = 30;
 
   static const pixelGap = 1;
 
-  Maze({Vector2? position})
+  Player player;
+
+  Maze(this.player, {Vector2? position})
       : super(
           position: position ?? Vector2(50, 50),
           size: Vector2(
@@ -22,14 +25,27 @@ class Maze extends PositionComponent with HasGameRef {
 
     for (var x = 0; x < mazeWidth; x++) {
       for (var y = 0; y < mazeHeight; y++) {
-        final xPixelGap = pixelGap * x;
-        final yPixelGap = pixelGap * y;
-
-        final xPosition = x * Square.squareSize + xPixelGap;
-        final yPosition = y * Square.squareSize + yPixelGap;
-
-        await add(Square(Vector2(xPosition, yPosition)));
+        await add(Square(getPositionOf(x, y)));
       }
     }
+
+    player.position = getPositionOf(
+          (Maze.mazeWidth / 2).round(),
+          Maze.mazeHeight - 1,
+        )
+        // puts it in the middle of maze square
+        + (Vector2.all(Square.squareSize) / 2);
+
+    add(player);
+  }
+
+  Vector2 getPositionOf(int x, int y) {
+    final xPixelGap = pixelGap * x;
+    final yPixelGap = pixelGap * y;
+
+    final xPosition = x * Square.squareSize + xPixelGap;
+    final yPosition = y * Square.squareSize + yPixelGap;
+
+    return Vector2(xPosition, yPosition);
   }
 }
