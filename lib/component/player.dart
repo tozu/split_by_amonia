@@ -25,14 +25,9 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   final bool _winning = false;
 
   Direction? _moveDirection;
-  Direction _facingDirection = Direction.north;
 
   // for animation
   bool _inMovingState = false;
-
-  // Facing direction (for sprites animation)
-  bool _facingSouth = true; // otherwise is north
-  bool _facingEast = true; // otherwise is west
 
   // Previous position (for collision calculation)
   late Vector2 _oldPosition;
@@ -75,15 +70,11 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   void update(double dt) {
     super.update(dt);
 
-    final length = children.query<MoveByEffect>().length;
-    if (length > 1) {
-      print('wee have more than one effect ($length) ');
-    }
-
     if (_crashing) {
       _handleCrash();
     } else if (_moveDirection != null) {
       _handleMovement();
+      _handleMovementAnimation(moveDirection: _moveDirection!);
     }
   }
 
@@ -113,6 +104,21 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
         _movePlayerPosition(Vector2(-Tile.spriteSize, 0));
         break;
       default:
+        break;
+    }
+  }
+
+  void _handleMovementAnimation({required Direction moveDirection}) {
+    // TODO(any): fix animation
+
+    switch (moveDirection) {
+      case Direction.north:
+      case Direction.south:
+        flipVertically();
+        break;
+      case Direction.east:
+      case Direction.west:
+        flipHorizontally();
         break;
     }
   }
