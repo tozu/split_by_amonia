@@ -9,11 +9,9 @@ class MyGame extends FlameGame
         KeyboardEvents,
         HasCollisionDetection,
         HasKeyboardHandlerComponents {
-  late GameBoard gameBoard;
-
   @override
   Future<void> onLoad() async {
-    gameBoard = GameBoard();
+    final gameBoard = GameBoard();
 
     add(gameBoard);
 

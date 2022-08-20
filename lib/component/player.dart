@@ -109,7 +109,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
       if (children.query<MoveByEffect>().isEmpty) {
         _oldPosition = position.clone();
-        _move(Vector2(0, Tile.spriteSize + Maze.pixelGap));
+        _move(Vector2(0, Tile.spriteSize));
       }
     } else if (_doMoveNorth) {
       if (_facingSouth) {
@@ -119,7 +119,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
       if (children.query<MoveByEffect>().isEmpty) {
         _oldPosition = position.clone();
-        _move(Vector2(0, -(Tile.spriteSize + Maze.pixelGap)));
+        _move(Vector2(0, -Tile.spriteSize));
       }
     } else if (_doMoveEast) {
       if (!_facingEast) {
@@ -129,7 +129,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
       if (children.query<MoveByEffect>().isEmpty) {
         _oldPosition = position.clone();
-        _move(Vector2(Tile.spriteSize + Maze.pixelGap, 0));
+        _move(Vector2(Tile.spriteSize, 0));
       }
     } else if (_doMoveWest) {
       if (_facingEast) {
@@ -139,7 +139,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
       if (children.query<MoveByEffect>().isEmpty) {
         _oldPosition = position.clone();
-        _move(Vector2(-(Tile.spriteSize + Maze.pixelGap), 0));
+        _move(Vector2(-Tile.spriteSize, 0));
       }
     } else {
       _isMoving = false;
