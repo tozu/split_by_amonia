@@ -1,22 +1,24 @@
 import 'package:flame/components.dart';
+import 'package:split/component/gameboard.dart';
 import 'package:split/component/player.dart';
-import 'package:split/component/square.dart';
+import 'package:split/component/tile.dart';
 
-class Maze extends PositionComponent {
+class Maze extends PositionComponent with ParentIsA<GameBoard> {
   static const int mazeWidth = 13;
   static const int mazeHeight = 20;
 
   static const pixelGap = 1;
 
-  Player player;
+  late final Player player;
 
-  Maze(this.player, {Vector2? position})
+  Maze({Vector2? position})
       : super(
           position: position ?? Vector2(50, 50),
           size: Vector2(
-            (mazeWidth * Square.squareSize) + (mazeWidth * pixelGap),
-            (mazeHeight * Square.squareSize) + (mazeHeight * pixelGap),
+            (mazeWidth * Tile.spriteSize) + (mazeWidth * pixelGap),
+            (mazeHeight * Tile.spriteSize) + (mazeHeight * pixelGap),
           ),
+          priority: 2,
         );
 
   @override
@@ -25,16 +27,22 @@ class Maze extends PositionComponent {
 
     for (var x = 0; x < mazeWidth; x++) {
       for (var y = 0; y < mazeHeight; y++) {
-        await add(Square(_getPositionOf(x, y)));
+        // TODO(any): generate/load maze with wall + path
+        await add(Tile(MazeType.path, _getPositionOf(x, y)));
       }
     }
+  }
+
+  void setPlayer(Player mazePlayer) {
+    player = mazePlayer;
 
     player.position = _getPositionOf(
           (Maze.mazeWidth / 2).floor(),
           Maze.mazeHeight - 1,
         )
         // puts it in the middle of maze square
-        + (Vector2.all(Square.squareSize) / 2);
+        +
+        (Vector2.all(Tile.spriteSize) / 2);
 
     add(player);
   }
@@ -43,8 +51,8 @@ class Maze extends PositionComponent {
     final xPixelGap = pixelGap * x;
     final yPixelGap = pixelGap * y;
 
-    final xPosition = x * Square.squareSize + xPixelGap;
-    final yPosition = y * Square.squareSize + yPixelGap;
+    final xPosition = x * Tile.spriteSize + xPixelGap;
+    final yPosition = y * Tile.spriteSize + yPixelGap;
 
     return Vector2(xPosition, yPosition);
   }

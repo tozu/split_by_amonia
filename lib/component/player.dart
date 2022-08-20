@@ -1,25 +1,11 @@
-import 'dart:ui';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/flame.dart';
-import 'package:flame/palette.dart';
 import 'package:flutter/animation.dart';
 import 'package:split/component/maze.dart';
-import 'package:split/component/square.dart';
-
-class PlayerSpritesPath {
-  final String idle;
-  final String moving;
-  final String crashing;
-
-  PlayerSpritesPath({
-    required this.idle,
-    required this.moving,
-    required this.crashing,
-  });
-}
+import 'package:split/component/tile.dart';
+import 'package:split/data/player_sprites_path.dart';
+import 'package:split/utils/utils.dart';
 
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     with CollisionCallbacks, ParentIsA<Maze> {
@@ -48,28 +34,23 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
           current: AnimationState.idle,
           anchor: Anchor.center,
           size: Vector2.all(_playerSize),
+          priority: 3,
         );
 
   @override
   Future<void> onLoad() async {
+    super.onLoad();
     add(RectangleHitbox());
 
     animations = {
-      AnimationState.idle: SpriteAnimation.spriteList(
-        await getSpriteList('${sprites.idle}[0-9]+.png'),
-        stepTime: 0.1,
-      ),
-      AnimationState.moving: SpriteAnimation.spriteList(
-        await getSpriteList('${sprites.moving}[0-9]+.png'),
-        stepTime: 0.1,
-      ),
-      AnimationState.crashing: SpriteAnimation.spriteList(
-        await getSpriteList('${sprites.crashing}[0-9]+.png'),
-        stepTime: 0.1,
-      ),
+      AnimationState.idle: await Utils.loadAnimation(sprites.idle),
+      AnimationState.moving: await Utils.loadAnimation(sprites.moving),
+      AnimationState.crashing: await Utils.loadAnimation(sprites.crashing),
     };
 
     children.register<MoveByEffect>();
+
+    debugMode = true;
   }
 
   void addEffectOnMove(Vector2 position) {
@@ -81,31 +62,25 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     add(effect);
   }
 
-  // TODO(any): extract to util class
-  Future<List<Sprite>> getSpriteList(String pattern) async {
-    final imageList = await Flame.images.loadAllFromPattern(
-      RegExp(
-        pattern,
-        caseSensitive: false,
-      ),
-    );
-    final spriteList = imageList.map(Sprite.new).toList();
-
-    return spriteList;
-  }
-
   @override
   void onCollisionStart(Set<Vector2> points, PositionComponent other) {
     super.onCollisionStart(points, other);
-    // TODO(any): impl. proper class
-    if (other is Wall) {
-      _crashing = true;
+    if (other is Tile) {
+      if (other.current == MazeType.wall) {
+        _crashing = true;
+      }
     }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+
+    final length = children.query<MoveByEffect>().length;
+    if (length > 1) {
+      print('wee have more than one effect ($length) ');
+    }
+
     if (_crashing) {
       handleCrash();
     } else {
@@ -114,23 +89,26 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   void handleCrash() {
+    print('CRAAAAAASH');
+
+    children.query<MoveByEffect>().forEach((element) {
+      element.removeFromParent();
+    });
+
     position = oldPosition;
     _crashing = false;
   }
 
   void handleMovement() {
-    oldPosition = position.clone();
-
-    //maybe add some acceleration?
     if (doMoveSouth) {
       if (!facingSouth) {
         flipVertically();
         facingSouth = true;
       }
 
-      // position.y += _speed * dt;
       if (children.query<MoveByEffect>().isEmpty) {
-        addEffectOnMove(Vector2(0, Square.squareSize + Maze.pixelGap));
+        oldPosition = position.clone();
+        addEffectOnMove(Vector2(0, Tile.spriteSize + Maze.pixelGap));
       }
     } else if (doMoveNorth) {
       if (facingSouth) {
@@ -139,15 +117,18 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       }
 
       if (children.query<MoveByEffect>().isEmpty) {
-        addEffectOnMove(Vector2(0, -(Square.squareSize + Maze.pixelGap)));
+        oldPosition = position.clone();
+        addEffectOnMove(Vector2(0, -(Tile.spriteSize + Maze.pixelGap)));
       }
     } else if (doMoveEast) {
       if (!facingEast) {
         flipHorizontally();
         facingEast = true;
       }
+
       if (children.query<MoveByEffect>().isEmpty) {
-        addEffectOnMove(Vector2(Square.squareSize + Maze.pixelGap, 0));
+        oldPosition = position.clone();
+        addEffectOnMove(Vector2(Tile.spriteSize + Maze.pixelGap, 0));
       }
     } else if (doMoveWest) {
       if (facingEast) {
@@ -156,7 +137,8 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       }
 
       if (children.query<MoveByEffect>().isEmpty) {
-        addEffectOnMove(Vector2(-(Square.squareSize + Maze.pixelGap), 0));
+        oldPosition = position.clone();
+        addEffectOnMove(Vector2(-(Tile.spriteSize + Maze.pixelGap), 0));
       }
     } else {
       moving = false;
@@ -201,9 +183,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 }
 
 class RealPlayer extends Player {
-  @override
-  final Paint paint = BasicPalette.red.paint();
-
   RealPlayer()
       : super(
           PlayerSpritesPath(
@@ -215,9 +194,6 @@ class RealPlayer extends Player {
 }
 
 class ShadowPlayer extends Player {
-  @override
-  final Paint paint = BasicPalette.blue.paint();
-
   ShadowPlayer()
       : super(
           // TODO(any): add sprites for shadow player
@@ -230,5 +206,3 @@ class ShadowPlayer extends Player {
 }
 
 enum AnimationState { idle, moving, winning, crashing }
-
-class Wall {}
