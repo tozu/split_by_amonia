@@ -21,6 +21,7 @@ class PlayerSpritesPath {
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     with CollisionCallbacks, ParentIsA<Maze> {
   PlayerSpritesPath sprites;
+  static const _playerSize = 10.0;
 
   final int _speed = 100;
   bool _crashing = false;
@@ -45,6 +46,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       : super(
           current: AnimationState.idle,
           anchor: Anchor.center,
+          size: Vector2.all(_playerSize),
         );
 
   @override
@@ -112,7 +114,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
         facingSouth = true;
       }
       yOld = position.y;
-      position.y -= _speed * dt;
+      position.y += _speed * dt;
     } else if (doMoveNorth) {
       if (facingSouth) {
         flipVertically();
