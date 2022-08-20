@@ -43,6 +43,10 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   // Previous position (for collision calculation)
   late Vector2 oldPosition;
 
+  // Player settings
+  bool active = true; // is controlled by player
+  int distance2other = 0; //
+
   Player(this.sprites)
       : super(
           current: AnimationState.idle,
@@ -106,10 +110,12 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   @override
   void update(double dt) {
     super.update(dt);
-    if (_crashing) {
-      handleCrash();
-    } else {
-      handleMovement();
+    if (active) {
+      if (_crashing) {
+        handleCrash();
+      } else {
+        handleMovement();
+      }
     }
   }
 
@@ -161,6 +167,14 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     } else {
       moving = false;
     }
+  }
+
+  void setDistance(Player p) {
+    //;
+  }
+
+  void setActivation(bool b) {
+    active = b;
   }
 
   void setAnimation() {

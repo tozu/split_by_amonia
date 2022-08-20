@@ -51,6 +51,9 @@ class MyGame extends FlameGame with HasTappables, KeyboardEvents {
     final isUp = event.logicalKey == LogicalKeyboardKey.arrowUp;
     final isDown = event.logicalKey == LogicalKeyboardKey.arrowDown;
 
+    final splitControl = event.logicalKey == LogicalKeyboardKey.keyQ;
+    final dualControl = event.logicalKey == LogicalKeyboardKey.keyW;
+
     final isKeyDown = event is RawKeyDownEvent;
     final isKeyUp = event is RawKeyUpEvent;
 
@@ -71,6 +74,18 @@ class MyGame extends FlameGame with HasTappables, KeyboardEvents {
         mazeOne.player.moveSouth(true);
         mazeTwo.player.moveSouth(true);
         return KeyEventResult.handled;
+      }
+
+      if (splitControl) {
+        if (mazeOne.player.active && mazeTwo.player.active) {
+          mazeTwo.player.setActivation(false);
+        } else {
+          mazeOne.player.setActivation(!mazeOne.player.active);
+          mazeTwo.player.setActivation(!mazeTwo.player.active);
+        }
+      } else if (dualControl) {
+        mazeOne.player.setActivation(true);
+        mazeTwo.player.setActivation(true);
       }
     } else if (isKeyUp) {
       if (isLeft) {
