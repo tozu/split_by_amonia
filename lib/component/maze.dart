@@ -3,8 +3,8 @@ import 'package:split/component/player.dart';
 import 'package:split/component/square.dart';
 
 class Maze extends PositionComponent {
-  static const int mazeWidth = 31;
-  static const int mazeHeight = 30;
+  static const int mazeWidth = 13;
+  static const int mazeHeight = 20;
 
   static const pixelGap = 1;
 
@@ -30,7 +30,7 @@ class Maze extends PositionComponent {
     }
 
     player.position = _getPositionOf(
-          (Maze.mazeWidth / 2).round(),
+          (Maze.mazeWidth / 2).floor(),
           Maze.mazeHeight - 1,
         )
         // puts it in the middle of maze square
