@@ -7,21 +7,28 @@ import 'package:split/component/tile.dart';
 import 'package:split/data/player_sprites_path.dart';
 import 'package:split/utils/utils.dart';
 
+enum Direction {
+  north,
+  south,
+  east,
+  west,
+}
+
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     with CollisionCallbacks, ParentIsA<Maze> {
+  // TODO(Tobias): extract moving into separate class
+
   PlayerSpritesPath sprites;
   static const _playerSize = 10.0;
 
   bool _crashing = false;
   final bool _winning = false;
 
-  // Movement
-  bool _doMoveSouth = false;
-  bool _doMoveNorth = false;
-  bool _doMoveEast = false;
-  bool _doMoveWest = false;
+  Direction? _moveDirection;
+  Direction _facingDirection = Direction.north;
 
-  bool _isMoving = false;
+  // for animation
+  bool _inMovingState = false;
 
   // Facing direction (for sprites animation)
   bool _facingSouth = true; // otherwise is north
@@ -54,15 +61,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     debugMode = true;
   }
 
-  void _move(Vector2 position) {
-    final effect = MoveByEffect(
-      position,
-      EffectController(duration: 0.5, curve: Curves.easeInOutQuart),
-    );
-
-    add(effect);
-  }
-
   @override
   void onCollisionStart(Set<Vector2> points, PositionComponent other) {
     super.onCollisionStart(points, other);
@@ -84,7 +82,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
     if (_crashing) {
       _handleCrash();
-    } else {
+    } else if (_moveDirection != null) {
       _handleMovement();
     }
   }
@@ -101,55 +99,28 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   void _handleMovement() {
-    if (_doMoveSouth) {
-      if (!_facingSouth) {
-        flipVertically();
-        _facingSouth = true;
-      }
-
-      if (children.query<MoveByEffect>().isEmpty) {
-        _oldPosition = position.clone();
-        _move(Vector2(0, Tile.spriteSize));
-      }
-    } else if (_doMoveNorth) {
-      if (_facingSouth) {
-        flipVertically();
-        _facingSouth = false;
-      }
-
-      if (children.query<MoveByEffect>().isEmpty) {
-        _oldPosition = position.clone();
-        _move(Vector2(0, -Tile.spriteSize));
-      }
-    } else if (_doMoveEast) {
-      if (!_facingEast) {
-        flipHorizontally();
-        _facingEast = true;
-      }
-
-      if (children.query<MoveByEffect>().isEmpty) {
-        _oldPosition = position.clone();
-        _move(Vector2(Tile.spriteSize, 0));
-      }
-    } else if (_doMoveWest) {
-      if (_facingEast) {
-        flipHorizontally();
-        _facingEast = false;
-      }
-
-      if (children.query<MoveByEffect>().isEmpty) {
-        _oldPosition = position.clone();
-        _move(Vector2(-Tile.spriteSize, 0));
-      }
-    } else {
-      _isMoving = false;
+    switch (_moveDirection) {
+      case Direction.north:
+        _movePlayerPosition(Vector2(0, -Tile.spriteSize));
+        break;
+      case Direction.south:
+        _movePlayerPosition(Vector2(0, Tile.spriteSize));
+        break;
+      case Direction.east:
+        _movePlayerPosition(Vector2(Tile.spriteSize, 0));
+        break;
+      case Direction.west:
+        _movePlayerPosition(Vector2(-Tile.spriteSize, 0));
+        break;
+      default:
+        break;
     }
   }
 
   void _setAnimationState() {
     if (_crashing) {
       current = AnimationState.crashing;
-    } else if (_isMoving) {
+    } else if (_inMovingState) {
       current = AnimationState.moving;
     } else if (_winning) {
       current = AnimationState.winning;
@@ -158,27 +129,23 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     }
   }
 
-  void moveSouth(bool b) {
-    _doMoveSouth = b;
-    _isMoving = b;
-    _setAnimationState();
+  void _movePlayerPosition(Vector2 moveTo) {
+    if (children.query<MoveByEffect>().isEmpty) {
+      _oldPosition = position.clone();
+
+      final effect = MoveByEffect(
+        moveTo,
+        EffectController(duration: 0.5, curve: Curves.easeInOutQuart),
+      );
+
+      add(effect);
+    }
   }
 
-  void moveNorth(bool b) {
-    _doMoveNorth = b;
-    _isMoving = b;
-    _setAnimationState();
-  }
+  void moveToDirection({required Direction? direction}) {
+    _moveDirection = direction;
+    _inMovingState = direction != null;
 
-  void moveEast(bool b) {
-    _doMoveEast = b;
-    _isMoving = b;
-    _setAnimationState();
-  }
-
-  void moveWest(bool b) {
-    _doMoveWest = b;
-    _isMoving = b;
     _setAnimationState();
   }
 }

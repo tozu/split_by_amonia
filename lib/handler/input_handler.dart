@@ -17,6 +17,7 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
+    super.onKeyEvent(event, keysPressed);
     final isLeft = event.logicalKey == LogicalKeyboardKey.arrowLeft;
     final isRight = event.logicalKey == LogicalKeyboardKey.arrowRight;
     final isUp = event.logicalKey == LogicalKeyboardKey.arrowUp;
@@ -27,54 +28,23 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
 
     if (isKeyDown) {
       if (isLeft) {
-        movePlayersWest(shouldMove: true);
+        movePlayers(direction: Direction.west);
       } else if (isRight) {
-        movePlayersEast(shouldMove: true);
+        movePlayers(direction: Direction.east);
       } else if (isUp) {
-        movePlayersNorth(shouldMove: true);
+        movePlayers(direction: Direction.north);
       } else if (isDown) {
-        movePlayersSouth(shouldMove: true);
+        movePlayers(direction: Direction.south);
       }
     } else if (isKeyUp) {
-      if (isLeft) {
-        movePlayersWest(shouldMove: false);
-      } else if (isRight) {
-        movePlayersEast(shouldMove: false);
-      } else if (isUp) {
-        movePlayersNorth(shouldMove: false);
-      } else if (isDown) {
-        movePlayersSouth(shouldMove: false);
-      }
+      movePlayers(direction: null);
     }
 
-    return super.onKeyEvent(event, keysPressed);
+    return false;
   }
 
-  void movePlayersSouth({
-    required bool shouldMove,
-  }) {
-    _realPlayer.moveSouth(shouldMove);
-    _shadowPlayer.moveSouth(shouldMove);
-  }
-
-  void movePlayersNorth({
-    required bool shouldMove,
-  }) {
-    _realPlayer.moveNorth(shouldMove);
-    _shadowPlayer.moveNorth(shouldMove);
-  }
-
-  void movePlayersEast({
-    required bool shouldMove,
-  }) {
-    _realPlayer.moveEast(shouldMove);
-    _shadowPlayer.moveEast(shouldMove);
-  }
-
-  void movePlayersWest({
-    required bool shouldMove,
-  }) {
-    _realPlayer.moveWest(shouldMove);
-    _shadowPlayer.moveWest(shouldMove);
+  void movePlayers({required Direction? direction}) {
+    _realPlayer.moveToDirection(direction: direction);
+    _shadowPlayer.moveToDirection(direction: direction);
   }
 }
