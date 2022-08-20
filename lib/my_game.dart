@@ -1,12 +1,17 @@
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_mini_sprite/flame_mini_sprite.dart';
+import 'package:flutter/material.dart';
+import 'package:mini_sprite/mini_sprite.dart';
 import 'package:split/component/square.dart';
+
+import 'component/maze.dart';
 
 class MyGame extends FlameGame with HasTappables {
   @override
   Future<void> onLoad() async {
-    add(Square(Vector2(100, 200)));
+    final miniLibrary = MiniLibrary.fromDataString(libraryAssets);
+    final sprites = miniLibrary.toSprites(pixelSize: 1, color: Colors.green);
   }
 
   @override
