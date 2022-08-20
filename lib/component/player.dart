@@ -13,21 +13,22 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   static const _playerSize = 10.0;
 
   bool _crashing = false;
-  bool winning = false;
+  final bool _winning = false;
 
   // Movement
-  bool doMoveSouth = false;
-  bool doMoveNorth = false;
-  bool doMoveEast = false;
-  bool doMoveWest = false;
-  bool moving = false;
+  bool _doMoveSouth = false;
+  bool _doMoveNorth = false;
+  bool _doMoveEast = false;
+  bool _doMoveWest = false;
+
+  bool _isMoving = false;
 
   // Facing direction (for sprites animation)
-  bool facingSouth = true; // otherwise is north
-  bool facingEast = true; // otherwise is west
+  bool _facingSouth = true; // otherwise is north
+  bool _facingEast = true; // otherwise is west
 
   // Previous position (for collision calculation)
-  late Vector2 oldPosition;
+  late Vector2 _oldPosition;
 
   Player(this.sprites)
       : super(
@@ -53,7 +54,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     debugMode = true;
   }
 
-  void addEffectOnMove(Vector2 position) {
+  void _move(Vector2 position) {
     final effect = MoveByEffect(
       position,
       EffectController(duration: 0.5, curve: Curves.easeInOutQuart),
@@ -82,75 +83,75 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     }
 
     if (_crashing) {
-      handleCrash();
+      _handleCrash();
     } else {
-      handleMovement();
+      _handleMovement();
     }
   }
 
-  void handleCrash() {
+  void _handleCrash() {
     print('CRAAAAAASH');
 
     children.query<MoveByEffect>().forEach((element) {
       element.removeFromParent();
     });
 
-    position = oldPosition;
+    position = _oldPosition;
     _crashing = false;
   }
 
-  void handleMovement() {
-    if (doMoveSouth) {
-      if (!facingSouth) {
+  void _handleMovement() {
+    if (_doMoveSouth) {
+      if (!_facingSouth) {
         flipVertically();
-        facingSouth = true;
+        _facingSouth = true;
       }
 
       if (children.query<MoveByEffect>().isEmpty) {
-        oldPosition = position.clone();
-        addEffectOnMove(Vector2(0, Tile.spriteSize + Maze.pixelGap));
+        _oldPosition = position.clone();
+        _move(Vector2(0, Tile.spriteSize + Maze.pixelGap));
       }
-    } else if (doMoveNorth) {
-      if (facingSouth) {
+    } else if (_doMoveNorth) {
+      if (_facingSouth) {
         flipVertically();
-        facingSouth = false;
+        _facingSouth = false;
       }
 
       if (children.query<MoveByEffect>().isEmpty) {
-        oldPosition = position.clone();
-        addEffectOnMove(Vector2(0, -(Tile.spriteSize + Maze.pixelGap)));
+        _oldPosition = position.clone();
+        _move(Vector2(0, -(Tile.spriteSize + Maze.pixelGap)));
       }
-    } else if (doMoveEast) {
-      if (!facingEast) {
+    } else if (_doMoveEast) {
+      if (!_facingEast) {
         flipHorizontally();
-        facingEast = true;
+        _facingEast = true;
       }
 
       if (children.query<MoveByEffect>().isEmpty) {
-        oldPosition = position.clone();
-        addEffectOnMove(Vector2(Tile.spriteSize + Maze.pixelGap, 0));
+        _oldPosition = position.clone();
+        _move(Vector2(Tile.spriteSize + Maze.pixelGap, 0));
       }
-    } else if (doMoveWest) {
-      if (facingEast) {
+    } else if (_doMoveWest) {
+      if (_facingEast) {
         flipHorizontally();
-        facingEast = false;
+        _facingEast = false;
       }
 
       if (children.query<MoveByEffect>().isEmpty) {
-        oldPosition = position.clone();
-        addEffectOnMove(Vector2(-(Tile.spriteSize + Maze.pixelGap), 0));
+        _oldPosition = position.clone();
+        _move(Vector2(-(Tile.spriteSize + Maze.pixelGap), 0));
       }
     } else {
-      moving = false;
+      _isMoving = false;
     }
   }
 
-  void setAnimation() {
+  void _setAnimationState() {
     if (_crashing) {
       current = AnimationState.crashing;
-    } else if (moving) {
+    } else if (_isMoving) {
       current = AnimationState.moving;
-    } else if (winning) {
+    } else if (_winning) {
       current = AnimationState.winning;
     } else {
       current = AnimationState.idle;
@@ -158,27 +159,27 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   void moveSouth(bool b) {
-    doMoveSouth = b;
-    moving = b;
-    setAnimation();
+    _doMoveSouth = b;
+    _isMoving = b;
+    _setAnimationState();
   }
 
   void moveNorth(bool b) {
-    doMoveNorth = b;
-    moving = b;
-    setAnimation();
+    _doMoveNorth = b;
+    _isMoving = b;
+    _setAnimationState();
   }
 
   void moveEast(bool b) {
-    doMoveEast = b;
-    moving = b;
-    setAnimation();
+    _doMoveEast = b;
+    _isMoving = b;
+    _setAnimationState();
   }
 
   void moveWest(bool b) {
-    doMoveWest = b;
-    moving = b;
-    setAnimation();
+    _doMoveWest = b;
+    _isMoving = b;
+    _setAnimationState();
   }
 }
 
