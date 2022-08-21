@@ -4,8 +4,6 @@ import 'package:split/component/gameboard.dart';
 import 'package:split/component/player.dart';
 import 'package:split/component/tile.dart';
 
-import '../assets.dart';
-
 class Maze extends PositionComponent with ParentIsA<GameBoard> {
   static const int mazeWidth = 13;
   static const int mazeHeight = 20;
@@ -22,8 +20,11 @@ class Maze extends PositionComponent with ParentIsA<GameBoard> {
   @override
   Future<void>? onLoad() async {
     super.onLoad();
+  }
+
+  void setLevel(String mazeAsset) async {
     children.register<Tile>(); //
-    final miniMap = MiniMap.fromDataString(realMazeMapLayout);
+    final miniMap = MiniMap.fromDataString(mazeAsset);
 
     for (final entry in miniMap.objects.entries) {
       final miniMapPositionX = entry.key.x;

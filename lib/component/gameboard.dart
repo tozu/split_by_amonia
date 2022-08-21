@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:split/assets.dart';
 import 'package:split/component/control_model_panel.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/player.dart';
@@ -32,6 +33,7 @@ class GameBoard extends PositionComponent {
     _realMaze = Maze(position: startPosition);
 
     _realMaze.setPlayer(realPlayer);
+    _realMaze.setLevel(realMazeMapLayoutLevel1);
 
     _shadowMaze = Maze(
       position: Vector2(
@@ -41,6 +43,7 @@ class GameBoard extends PositionComponent {
     );
 
     _shadowMaze.setPlayer(shadowPlayer);
+    _shadowMaze.setLevel(shadowMazeMapLayoutLevel1);
 
     add(_realMaze);
     add(_shadowMaze);
