@@ -2,6 +2,8 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:split/component/gameboard.dart';
 import 'package:split/component/player.dart';
+import 'package:split/component/victory_screen.dart';
+import 'package:split/handler/audio_handler.dart';
 import 'package:split/handler/input_handler.dart';
 
 import 'component/winning_animation.dart';
@@ -16,9 +18,25 @@ class MyGame extends FlameGame
   late Player shadowPlayer;
   bool winningState = false;
   bool loosingState = false;
+  bool won = false;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (winningState && !won) {
+      won = true;
+      add(VictoryScreen());
+    }
+  }
 
   @override
   Future<void> onLoad() async {
+    init();
+  }
+
+  void init() async {
+    final audioHandler = AudioHandler();
+    await audioHandler.init();
     final gameBoard = GameBoard();
 
     add(WinningAnimation(size: size, position: size / 2));
@@ -36,13 +54,17 @@ class MyGame extends FlameGame
     );
 
     camera.viewport = FixedResolutionViewport(gameBoard.size);
+
+    audioHandler.playBackgroundMusic();
+  }
+
+  void restart() {
+    removeAll(children);
+    init();
   }
 
   @override
-  void update(double dt) {
-    super.update(dt);
-    if (winningState) {
-      print("you've won!");
-    }
+  void onRemove() async {
+    super.onRemove();
   }
 }

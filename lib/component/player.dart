@@ -61,8 +61,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     // TODO(any): Boarder reached animation
 
     children.register<MoveByEffect>();
-
-    debugMode = true;
   }
 
   @override
@@ -160,6 +158,8 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
             flipHorizontally();
           }
           current = AnimationState.movingSide;
+          break;
+        default:
           break;
       }
     } else if (_winning) {

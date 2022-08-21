@@ -37,7 +37,6 @@ class Tile extends SpriteGroupComponent<MazeType>
   bool onTapUp(TapUpInfo info) {
     current = (MazeType.path == current) ? MazeType.wall : MazeType.path;
 
-    debugMode = true;
     priority = 1;
 
     info.handled = true;
