@@ -17,6 +17,7 @@ class MyGame extends FlameGame
   bool winningState = false;
   bool loosingState = false;
   bool won = false;
+  final audioHandler = AudioHandler();
 
   @override
   void update(double dt) {
@@ -33,7 +34,6 @@ class MyGame extends FlameGame
   }
 
   void init() async {
-    final audioHandler = AudioHandler();
     await audioHandler.init();
     final gameBoard = GameBoard();
 
@@ -56,6 +56,7 @@ class MyGame extends FlameGame
   }
 
   void restart() {
+    audioHandler.stopBackgroundMusic();
     removeAll(children);
     init();
   }
