@@ -22,6 +22,7 @@ class Tile extends SpriteGroupComponent<MazeType>
     sprites = {
       MazeType.path: Sprite(await Flame.images.load('path.png')),
       MazeType.wall: Sprite(await Flame.images.load('wall.png')),
+      MazeType.goal: Sprite(await Flame.images.load('goal.png')),
     };
 
     current = startingType;
@@ -47,4 +48,5 @@ class Tile extends SpriteGroupComponent<MazeType>
 enum MazeType {
   path,
   wall,
+  goal,
 }

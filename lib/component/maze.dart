@@ -20,10 +20,16 @@ class Maze extends PositionComponent with ParentIsA<GameBoard> {
   Future<void>? onLoad() async {
     super.onLoad();
     children.register<Tile>(); //
+    final goalPosition = _getPositionOf((Maze.mazeWidth / 2).floor(), 0);
+
     for (var x = 0; x < mazeWidth; x++) {
       for (var y = 0; y < mazeHeight; y++) {
-        // TODO(any): generate/load maze with wall + path
-        await add(Tile(MazeType.path, _getPositionOf(x, y)));
+        var curretPosition = _getPositionOf(x, y);
+        if (goalPosition == curretPosition) {
+          await add(Tile(MazeType.goal, curretPosition));
+        } else {
+          await add(Tile(MazeType.path, curretPosition));
+        }
       }
     }
   }

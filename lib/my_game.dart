@@ -12,6 +12,8 @@ class MyGame extends FlameGame
         HasKeyboardHandlerComponents {
   late Player realPlayer;
   late Player shadowPlayer;
+  bool winningState = false;
+  bool loosingState = false;
 
   @override
   Future<void> onLoad() async {
@@ -30,5 +32,13 @@ class MyGame extends FlameGame
     );
 
     camera.viewport = FixedResolutionViewport(gameBoard.size);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (winningState) {
+      print("you've won!");
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/player_border.dart';
 import 'package:split/component/tile.dart';
@@ -88,6 +89,10 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     // so it does not move
     if (!isManualModeActive) {
       return;
+    }
+
+    if (_isOnGoalTile() && other._isOnGoalTile()) {
+      gameRef.winningState = true;
     }
 
     if (_hasCrashed) {
@@ -186,6 +191,16 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       }
     }
     return true;
+  }
+
+  bool _isOnGoalTile() {
+    for (final tile in parent.children.query<Tile>()) {
+      if (tile.containsPoint(absolutePosition) &&
+          tile.current == MazeType.goal) {
+        return true;
+      }
+    }
+    return false;
   }
 
   bool _isBothLegalMove(Vector2 deltaPosition) {
