@@ -17,7 +17,7 @@ class MyGame extends FlameGame
   Future<void> onLoad() async {
     final gameBoard = GameBoard();
 
-    add(gameBoard);
+    await add(gameBoard);
 
     realPlayer = gameBoard.realPlayer;
     shadowPlayer = gameBoard.shadowPlayer;

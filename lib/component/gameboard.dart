@@ -2,6 +2,8 @@ import 'package:flame/components.dart';
 import 'package:split/component/control_model_panel.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/player.dart';
+import 'package:split/component/real_player.dart';
+import 'package:split/component/shadow_player.dart';
 
 class GameBoard extends PositionComponent {
   static const _mazeGap = 10;
@@ -13,18 +15,19 @@ class GameBoard extends PositionComponent {
 
   Player get shadowPlayer => _shadowMaze.player;
 
-  GameBoard() : super(priority: -1) {
-    init();
-  }
-
   final ControlModePanel controlModePanel = ControlModePanel(
     controlMode: ControlMode.together,
   );
 
-  void init() {
+  GameBoard() : super(priority: -1);
+
+  @override
+  Future<void> onLoad() async {
     final realPlayer = RealPlayer();
     final shadowPlayer = ShadowPlayer();
 
+    realPlayer.other = shadowPlayer;
+    shadowPlayer.other = realPlayer;
     final startPosition = Vector2(50, 50);
     _realMaze = Maze(position: startPosition);
 

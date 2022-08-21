@@ -21,7 +21,8 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   PlayerSpritesPath sprites;
   static const _playerSize = 10.0;
 
-  late PlayerBorder border;
+  late final PlayerBorder border;
+  late final Player other;
 
   bool _hasCrashed = false;
   final bool _winning = false;
@@ -167,8 +168,8 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     }
   }
 
-  bool _isLegalMove(Vector2 nextPosition) {
-    // check whether we have enough steps to move with-in
+  bool isLegalMove(Vector2 deltaPosition) {
+    final nextPosition = absolutePosition + deltaPosition;
     if (!border.containsPoint(nextPosition)) {
       return false;
     }
@@ -187,9 +188,17 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     return true;
   }
 
+  bool _isBothLegalMove(Vector2 deltaPosition) {
+    if (isManualModeActive && other.isManualModeActive) {
+      return isLegalMove(deltaPosition) && other.isLegalMove(deltaPosition);
+    } else {
+      return isLegalMove(deltaPosition);
+    }
+  }
+
   void _movePlayerPosition(Vector2 deltaPosition) {
     if (children.query<MoveByEffect>().isEmpty &&
-        _isLegalMove(absolutePosition + deltaPosition)) {
+        _isBothLegalMove(deltaPosition)) {
       _oldPosition = position.clone();
 
       final effect = MoveByEffect(
@@ -206,46 +215,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     _inMovingState = direction != null;
 
     _setAnimationState();
-  }
-
-}
-
-class RealPlayer extends Player {
-  RealPlayer()
-      : super(
-          PlayerSpritesPath(
-            idle: 'playerIdle',
-            moving: 'playerMoving',
-            crashing: 'playerCrashing',
-          ),
-        );
-
-  @override
-  Future<void> onLoad() async {
-    super.onLoad();
-    position.addListener(() {
-      gameRef.shadowPlayer.border.position = position;
-    });
-  }
-}
-
-class ShadowPlayer extends Player {
-  ShadowPlayer()
-      : super(
-          // TODO(any): add sprites for shadow player
-          PlayerSpritesPath(
-            idle: 'playerIdle',
-            moving: 'playerMoving',
-            crashing: 'playerCrashing',
-          ),
-        );
-
-  @override
-  Future<void> onLoad() async {
-    super.onLoad();
-    position.addListener(() {
-      gameRef.realPlayer.border.position = position;
-    });
   }
 }
 
