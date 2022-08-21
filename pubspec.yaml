@@ -21,6 +21,10 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  fonts:
+    - family: Butcherman
+      fonts:
+        - asset: assets/fonts/Butcherman-Regular.ttf
   assets:
     - assets/images/
     - assets/audio/
