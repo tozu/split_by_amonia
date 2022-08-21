@@ -9,13 +9,11 @@ class PlayerBorder extends PositionComponent
   final int borderReach;
   final Player player;
 
-  // static const pixelGap = 1;
-
   PlayerBorder({required this.player, this.borderReach = 5})
       : super(
           size: Vector2(
-            (borderReach * Tile.spriteSize), // + (borderReach * pixelGap),
-            (borderReach * Tile.spriteSize), // + (borderReach * pixelGap),
+            borderReach * Tile.spriteSize,
+            borderReach * Tile.spriteSize,
           ),
           anchor: Anchor.center,
         );
