@@ -39,15 +39,15 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
       } else if (isDown) {
         movePlayers(direction: Direction.south);
       } else if (splitControl) {
-        if (_realPlayer.active && _shadowPlayer.active) {
-          _shadowPlayer.setActivation(false);
+        if (_realPlayer.isManualModeActive && _shadowPlayer.isManualModeActive) {
+          _shadowPlayer.enableManualMode(false);
         } else {
-          _realPlayer.setActivation(!_realPlayer.active);
-          _shadowPlayer.setActivation(!_shadowPlayer.active);
+          _realPlayer.enableManualMode(!_realPlayer.isManualModeActive);
+          _shadowPlayer.enableManualMode(!_shadowPlayer.isManualModeActive);
         }
       } else if (dualControl) {
-        _realPlayer.setActivation(true);
-        _shadowPlayer.setActivation(true);
+        _realPlayer.enableManualMode(true);
+        _shadowPlayer.enableManualMode(true);
       }
     } else if (isKeyUp) {
       movePlayers(direction: null);

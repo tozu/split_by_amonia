@@ -18,16 +18,15 @@ enum Direction {
 
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     with CollisionCallbacks, ParentIsA<Maze>, HasGameRef<MyGame> {
-  // TODO(Tobias): extract moving into separate class
   PlayerSpritesPath sprites;
   static const _playerSize = 10.0;
 
   late final PlayerBorder border;
   late final Player other;
 
-  bool _crashing = false;
+  bool _hasCrashed = false;
   final bool _winning = false;
-  bool _boarderReached = false;
+  bool _isBoarderReached = false;
 
   Direction? _moveDirection;
 
@@ -38,8 +37,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   late Vector2 _oldPosition;
 
   // Player settings
-  bool active = true; // is controlled by player
-  int distance2other = 0; //
+  bool isManualModeActive = true; // is controlled by player
 
   Player(this.sprites)
       : super(
@@ -53,9 +51,12 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   Future<void> onLoad() async {
     super.onLoad();
     add(RectangleHitbox());
+
     border = PlayerBorder(player: this);
     parent.add(border);
-    // TODO: Boarderreached animation
+
+    // TODO(any): Boarder reached animation
+
     animations = {
       AnimationState.idle: await Utils.loadAnimation(sprites.idle),
       AnimationState.moving: await Utils.loadAnimation(sprites.moving),
@@ -72,10 +73,10 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     super.onCollisionStart(points, other);
     if (other is Tile) {
       if (other.current == MazeType.wall) {
-        _crashing = true;
+        _hasCrashed = true;
       }
     } else if (other is PlayerBorder) {
-      _boarderReached = true;
+      _isBoarderReached = true;
     }
   }
 
@@ -85,37 +86,32 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
     // currently in manual mode -> deactivates the other player temporarily,
     // so it does not move
-    // TODO(Tobias): fix logic
-    // if (!active) {
-    //   return;
-    // }
+    if (!isManualModeActive) {
+      return;
+    }
 
-    if (active) {
-      if (_crashing) {
-        _handleCrash();
-      } else if (_moveDirection != null) {
-        _handleMovement();
-        _handleMovementAnimation(moveDirection: _moveDirection!);
-      } else if (_boarderReached) {
-        handleBoarder();
-      }
+    if (_hasCrashed) {
+      _handleCrash();
+    } else if (_moveDirection != null) {
+      _handleMovement();
+      _handleMovementAnimation(moveDirection: _moveDirection!);
+    } else if (_isBoarderReached) {
+      _didReachBoarder();
     }
   }
 
-  void handleBoarder() {
+  void _didReachBoarder() {
     position = _oldPosition;
-    _boarderReached = false;
+    _isBoarderReached = false;
   }
 
   void _handleCrash() {
-    print('CRAAAAAASH');
-
     children.query<MoveByEffect>().forEach((element) {
       element.removeFromParent();
     });
 
     position = _oldPosition;
-    _crashing = false;
+    _hasCrashed = false;
   }
 
   void _handleMovement() {
@@ -156,12 +152,12 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     }
   }
 
-  void setActivation(bool activation) {
-    active = activation;
+  void enableManualMode(bool activation) {
+    isManualModeActive = activation;
   }
 
   void _setAnimationState() {
-    if (_crashing) {
+    if (_hasCrashed) {
       current = AnimationState.crashing;
     } else if (_inMovingState) {
       current = AnimationState.moving;
@@ -178,10 +174,12 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       return false;
     }
 
+    // check if we are within in game borders
     if (!parent.containsPoint(nextPosition)) {
       return false;
     }
 
+    // check whether we walked into a wall
     for (final tile in parent.children.query<Tile>()) {
       if (tile.containsPoint(nextPosition) && tile.current == MazeType.wall) {
         return false;
@@ -218,9 +216,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
     _setAnimationState();
   }
-
-  // TODO(tobias): make smarter
-  // void listenToOtherPlayerPosition();
 }
 
 enum AnimationState { idle, moving, winning, crashing }
