@@ -156,6 +156,8 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
           }
           current = AnimationState.movingSide;
           break;
+        default:
+          break;
       }
     } else if (_winning) {
       //current = AnimationState.winning;

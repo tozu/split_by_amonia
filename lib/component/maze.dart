@@ -24,11 +24,11 @@ class Maze extends PositionComponent with ParentIsA<GameBoard> {
 
     for (var x = 0; x < mazeWidth; x++) {
       for (var y = 0; y < mazeHeight; y++) {
-        var curretPosition = _getPositionOf(x, y);
-        if (goalPosition == curretPosition) {
-          await add(Tile(MazeType.goal, curretPosition));
+        final currentPosition = _getPositionOf(x, y);
+        if (goalPosition == currentPosition) {
+          await add(Tile(MazeType.goal, currentPosition));
         } else {
-          await add(Tile(MazeType.path, curretPosition));
+          await add(Tile(MazeType.path, currentPosition));
         }
       }
     }
