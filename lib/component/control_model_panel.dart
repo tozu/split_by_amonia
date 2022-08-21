@@ -16,35 +16,47 @@ enum ControlMode {
 }
 
 class ControlModePanel extends PositionComponent {
-  // image: active state
-  // text: Manual mode (active/inactive)
-  // text: player 1/2
-
-  // image: active state
-  // text: automatic mode (active/inactive)
-  // text: moving both players
-
-  static const controlStateSize = 28.0;
+  static const _controlStateSize = 28.0;
 
   final _regular = TextPaint(
     style: TextStyle(
-      fontSize: 18,
+      fontSize: 12,
       color: BasicPalette.white.color,
     ),
   );
 
-  ControlMode controlMode;
-  late Player? activePlayer;
+  late SpriteGroupComponent _enabledIcon;
 
-  late SpriteGroupComponent enabledPicture;
+  // Control mode
+  ControlMode _controlMode;
+  late TextComponent _modeComponent;
 
-  ControlModePanel({required this.controlMode});
+  String get _controlModeText {
+    final mode = _controlMode == ControlMode.single ? 'Single' : 'Together';
+    return 'Mode: $mode';
+  }
 
-  String get controlModeText =>
-      controlMode == ControlMode.single ? 'Single' : 'Together';
+  // player name
+  Player? _activePlayer;
 
-  // TODO(any): clarify player type name
-  String get playerText => activePlayer is ShadowPlayer ? '1' : '2';
+  TextComponent? _playerNameComponent;
+
+  Vector2 get _playerNamePosition =>
+      _enabledIcon.positionOfAnchor(Anchor.centerRight) + Vector2(10, 0);
+
+  String get _activePlayerText {
+    final activePlayer = _activePlayer == null
+        ? ''
+        // TODO(any): clarify player type name
+        : _activePlayer is ShadowPlayer
+            ? '1'
+            : '2';
+
+    return 'Player $activePlayer';
+  }
+
+  ControlModePanel({required ControlMode controlMode})
+      : _controlMode = controlMode;
 
   @override
   Future<void> onLoad() async {
@@ -55,34 +67,72 @@ class ControlModePanel extends PositionComponent {
       ControlState.disabled: Sprite(await Flame.images.load('disabled.png')),
     };
 
-    enabledPicture = SpriteGroupComponent<ControlState>(
+    final enabledIconPosition = Vector2(10, 10);
+    _enabledIcon = SpriteGroupComponent<ControlState>(
       sprites: sprites,
-      size: Vector2(controlStateSize, controlStateSize),
+      size: Vector2(_controlStateSize, _controlStateSize),
+      position: enabledIconPosition,
     );
 
-    enabledPicture.current = ControlState.disabled;
+    _enabledIcon.current = ControlState.disabled;
+
+    final modePosition =
+        _enabledIcon.positionOfAnchor(Anchor.topRight) + Vector2(10, 0);
+
+    _modeComponent = _createTextComponent(
+      _controlModeText,
+      modePosition,
+    );
 
     addAll([
-      // TODO(Tobias): move to right positions
-      enabledPicture,
-      TextComponent(text: 'Mode: $controlModeText', textRenderer: _regular)
-        ..anchor = Anchor.topCenter
-        ..x = size.x / 2
-        ..y = 32.0,
-      if (controlMode == ControlMode.single) ...[
-        TextComponent(text: 'Player $playerText', textRenderer: _regular)
-          ..anchor = Anchor.topCenter
-          ..x = size.x / 2
-          ..y = 32.0,
-      ],
+      _enabledIcon,
+      _modeComponent,
     ]);
   }
 
   void updateControlMode({required ControlMode mode, Player? player}) {
-    enabledPicture.current = mode == ControlMode.single
+    _controlMode = mode;
+    _activePlayer = player;
+
+    _enabledIcon.current = _controlMode == ControlMode.single
         ? ControlState.enabled
         : ControlState.disabled;
 
-    activePlayer = player;
+    _updateTextComponent(_modeComponent, _controlModeText);
+
+    _updateActivePlayer();
+  }
+
+  void _updateActivePlayer() {
+    if (_activePlayer == null) {
+      // hide Player name
+      remove(_playerNameComponent!);
+      _playerNameComponent = null;
+    } else {
+      // update Player name
+      if (_playerNameComponent == null) {
+        // there is no player name
+        _playerNameComponent = _createTextComponent(
+          _activePlayerText,
+          _playerNamePosition,
+        );
+
+        add(_playerNameComponent!);
+      } else {
+        // update it!
+        _updateTextComponent(_playerNameComponent!, _activePlayerText);
+      }
+    }
+  }
+
+  // TODO(any): move to Utils class
+  void _updateTextComponent(TextComponent component, String text) {
+    component.text = text;
+  }
+
+  // TODO(any): move to Utils class
+  TextComponent _createTextComponent(String text, Vector2 position) {
+    return TextComponent(text: text, textRenderer: _regular)
+      ..position = position;
   }
 }
