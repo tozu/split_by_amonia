@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:split/component/winning_animation.dart';
 import 'package:split/my_game.dart';
@@ -38,8 +38,8 @@ class VictoryScreen extends PositionComponent with HasGameRef<MyGame> {
         ),
         WinningAnimation(size: size, position: size / 2),
         SpriteButtonComponent(
-          button: await Sprite.load("RestartUp.png"),
-          buttonDown: await Sprite.load("RestartDown.png"),
+          button: Sprite(await Flame.images.load('restart.png')),
+          buttonDown: Sprite(await Flame.images.load('restart.png')),
           onPressed: () {
             gameRef.restart();
           },

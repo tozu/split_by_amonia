@@ -17,11 +17,14 @@ class MyGame extends FlameGame
   bool winningState = false;
   bool loosingState = false;
   bool won = false;
+  final audioHandler = AudioHandler();
 
   @override
-  void update(double dt) {
+  Future<void> update(double dt) async {
     super.update(dt);
     if (winningState && !won) {
+      await audioHandler.stopBackgroundMusic();
+      await audioHandler.playWinning();
       won = true;
       add(VictoryScreen(size: Vector2(300, 300)));
     }
@@ -32,10 +35,11 @@ class MyGame extends FlameGame
     init();
   }
 
-  void init() async {
-    final audioHandler = AudioHandler();
+  Future<void> init() async {
     await audioHandler.init();
-    final gameBoard = GameBoard();
+    await audioHandler.initializeSoundEffects();
+
+    final gameBoard = GameBoard(audio: audioHandler);
 
     await add(gameBoard);
 
@@ -47,21 +51,18 @@ class MyGame extends FlameGame
         realPlayer: realPlayer,
         shadowPlayer: shadowPlayer,
         panel: gameBoard.controlModePanel,
+        audio: audioHandler,
       ),
     );
 
     camera.viewport = FixedResolutionViewport(gameBoard.size);
 
-    audioHandler.playBackgroundMusic();
+    // audioHandler.playBackgroundMusic();
   }
 
   void restart() {
+    audioHandler.stopBackgroundMusic();
     removeAll(children);
     init();
-  }
-
-  @override
-  void onRemove() async {
-    super.onRemove();
   }
 }

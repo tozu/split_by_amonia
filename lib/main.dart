@@ -10,14 +10,8 @@ void main() {
 
 /*
       TODO:
-        - draw maze(s)
-        - generate maze -> background + wall (path is clear)
-        - draw player(s)
-        - [x] load sprite for player(s)
-        - [x] impl. movement logic
-        - [x] impl. collision logic
-        - impl. win/loose logic
-
-        nice to have:
-        - game menu (start, manual, credits, exit)
+        - start menu (tobias)
+        - maze assets (tobias)
+        - timer component (joel)
+        - winning animation (Emma)
  */

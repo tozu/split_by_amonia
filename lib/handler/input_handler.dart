@@ -2,16 +2,19 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:split/component/control_model_panel.dart';
 import 'package:split/component/player.dart';
+import 'package:split/handler/audio_handler.dart';
 
 class KeyboardInputHandler extends KeyboardListenerComponent {
   final Player _realPlayer;
   final Player _shadowPlayer;
   final ControlModePanel panel;
+  final AudioHandler audio;
 
   KeyboardInputHandler({
     required Player realPlayer,
     required Player shadowPlayer,
     required this.panel,
+    required this.audio,
   })  : _realPlayer = realPlayer,
         _shadowPlayer = shadowPlayer;
 
@@ -62,6 +65,7 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
         _realPlayer.enableManualMode(true);
         _shadowPlayer.enableManualMode(true);
       }
+
     } else if (isKeyUp) {
       movePlayers(direction: null);
     }
@@ -70,6 +74,11 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
   }
 
   void movePlayers({required Direction? direction}) {
+    if (direction != null) {
+      // play step sound
+      audio.playStep();
+    }
+
     _realPlayer.moveToDirection(direction: direction);
     _shadowPlayer.moveToDirection(direction: direction);
   }
