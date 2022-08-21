@@ -13,5 +13,5 @@ jobs:
       - uses: subosito/flutter-action@v1
       - uses: bluefireteam/flutter-gh-pages@v7
         with:
-          baseHref: /tozu/
+          baseHref: /split_by_amonia/
           customArgs: --web-renderer="canvaskit"
