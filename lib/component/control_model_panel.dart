@@ -3,6 +3,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:split/component/player.dart';
+import 'package:split/component/shadow_player.dart';
 
 enum ControlState {
   enabled,
