@@ -3,11 +3,12 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
-import 'package:split/component/maze.dart';
 import 'package:split/component/player_border.dart';
 import 'package:split/component/tile.dart';
 import 'package:split/data/player_sprites_path.dart';
 import 'package:split/my_game.dart';
+
+import 'maze.dart';
 
 enum Direction {
   north,
@@ -17,11 +18,11 @@ enum Direction {
 }
 
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
-    with CollisionCallbacks, ParentIsA<Maze>, HasGameRef<MyGame> {
+    with CollisionCallbacks, HasGameRef<MyGame> {
   PlayerSpritesPath sprites;
   static const _playerSize = 10.0;
 
-  late final PlayerBorder border;
+  PlayerBorder? border;
   late final Player other;
 
   bool _hasCrashed = false;
@@ -50,10 +51,12 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    add(RectangleHitbox());
 
-    border = PlayerBorder(player: this);
-    parent.add(border);
+    if (parent is Maze) {
+      add(RectangleHitbox());
+      border = PlayerBorder(player: this);
+      parent?.add(border!);
+    }
 
     // TODO(any): Boarder reached animation
 
@@ -168,17 +171,17 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
   bool isLegalMove(Vector2 deltaPosition) {
     final nextPosition = absolutePosition + deltaPosition;
-    if (!border.containsPoint(nextPosition)) {
+    if (!(border?.containsPoint(nextPosition) ?? false)) {
       return false;
     }
 
     // check if we are within in game borders
-    if (!parent.containsPoint(nextPosition)) {
+    if (!parent!.containsPoint(nextPosition)) {
       return false;
     }
 
     // check whether we walked into a wall
-    for (final tile in parent.children.query<Tile>()) {
+    for (final tile in parent!.children.query<Tile>()) {
       if (tile.containsPoint(nextPosition) && tile.current == MazeType.wall) {
         return false;
       }
@@ -187,7 +190,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   bool _isOnGoalTile() {
-    for (final tile in parent.children.query<Tile>()) {
+    for (final tile in parent!.children.query<Tile>()) {
       if (tile.containsPoint(absolutePosition) &&
           tile.current == MazeType.goal) {
         return true;
