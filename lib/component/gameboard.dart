@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:split/component/control_model_panel.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/player.dart';
 import 'package:split/component/real_player.dart';
@@ -13,6 +14,10 @@ class GameBoard extends PositionComponent {
   Player get realPlayer => _realMaze.player;
 
   Player get shadowPlayer => _shadowMaze.player;
+
+  final ControlModePanel controlModePanel = ControlModePanel(
+    controlMode: ControlMode.together,
+  );
 
   GameBoard() : super(priority: -1);
 
@@ -39,6 +44,11 @@ class GameBoard extends PositionComponent {
 
     add(_realMaze);
     add(_shadowMaze);
+
+    // TODO(Tobias): move control at right place
+    // TODO(Tobias): adjust position of control mode components
+
+    add(controlModePanel);
 
     size = Vector2(
       _realMaze.size.x * 2 + _mazeGap + _realMaze.position.x * 2,
