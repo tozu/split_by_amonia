@@ -48,11 +48,4 @@ class MyGame extends FlameGame
       print("you've won!");
     }
   }
-
-  @override
-  void onRemove() async {
-    super.onRemove();
-
-
-  }
 }
