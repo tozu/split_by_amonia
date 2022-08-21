@@ -57,7 +57,7 @@ class MyGame extends FlameGame
 
     camera.viewport = FixedResolutionViewport(gameBoard.size);
 
-    audioHandler.playBackgroundMusic();
+    // audioHandler.playBackgroundMusic();
   }
 
   void restart() {

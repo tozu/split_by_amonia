@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:split/assets.dart';
 import 'package:split/component/control_model_panel.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/player.dart';
@@ -24,6 +25,16 @@ class GameBoard extends PositionComponent {
 
   GameBoard({required this.audio}) : super(priority: -1);
 
+  // TODO(any): add randomization for loading mazes
+  String get realMaze {
+    return realMazeMapLayout;
+  }
+
+  String get shadowMaze {
+    // TODO(any): add shadow maze
+    return realMazeMapLayout;
+  }
+
   @override
   Future<void> onLoad() async {
     final realPlayer = RealPlayer(audio);
@@ -32,7 +43,8 @@ class GameBoard extends PositionComponent {
     realPlayer.other = shadowPlayer;
     shadowPlayer.other = realPlayer;
     final startPosition = Vector2(50, 50);
-    _realMaze = Maze(position: startPosition);
+
+    _realMaze = Maze(position: startPosition, asset: realMaze);
 
     _realMaze.setPlayer(realPlayer);
 
@@ -41,6 +53,7 @@ class GameBoard extends PositionComponent {
         _realMaze.position.x + _realMaze.width + _mazeGap,
         _realMaze.position.y,
       ),
+      asset: shadowMaze,
     );
 
     _shadowMaze.setPlayer(shadowPlayer);
