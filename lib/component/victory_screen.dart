@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:split/my_game.dart';
 
@@ -25,18 +24,18 @@ class VictoryScreen extends PositionComponent with HasGameRef<MyGame> {
           size: Vector2(300, 500),
           paint: Paint()..color = Colors.black.withOpacity(0.8),
         ),
-        TextComponent(text: "Hooray!", textRenderer: _myFont)
+        TextComponent(text: 'Hooray!', textRenderer: _myFont)
           ..anchor = Anchor.center
           ..position = size / 2 - Vector2(0, 180),
         TextComponent(
-          text: "Create more?",
+          text: 'Create more?',
           textRenderer: _myFont,
           anchor: Anchor.center,
           position: size / 2 + Vector2(0, 120),
         ),
         SpriteButtonComponent(
-          button: await Sprite.load("RestartUp.png"),
-          buttonDown: await Sprite.load("RestartDown.png"),
+          button: await Sprite.load('RestartUp.png'),
+          buttonDown: await Sprite.load('RestartDown.png'),
           onPressed: () {
             gameRef.restart();
           },

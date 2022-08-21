@@ -20,9 +20,11 @@ class MyGame extends FlameGame
   final audioHandler = AudioHandler();
 
   @override
-  void update(double dt) {
+  Future<void> update(double dt) async {
     super.update(dt);
     if (winningState && !won) {
+      await audioHandler.stopBackgroundMusic();
+      await audioHandler.playWinning();
       won = true;
       add(VictoryScreen());
     }
@@ -37,7 +39,7 @@ class MyGame extends FlameGame
     await audioHandler.init();
     await audioHandler.initializeSoundEffects();
 
-    final gameBoard = GameBoard();
+    final gameBoard = GameBoard(audio: audioHandler);
 
     await add(gameBoard);
 

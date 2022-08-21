@@ -5,15 +5,17 @@ import 'package:mini_sprite/mini_sprite.dart';
 import 'package:split/assets.dart';
 import 'package:split/component/player.dart';
 import 'package:split/data/player_sprites_path.dart';
+import 'package:split/handler/audio_handler.dart';
 
 class RealPlayer extends Player {
-  RealPlayer()
+  RealPlayer(AudioHandler audioHandler)
       : super(
           PlayerSpritesPath(
             idle: 'playerIdle',
             moving: 'playerMoving',
             crashing: 'playerCrashing',
           ),
+          audioHandler,
         );
 
   @override
