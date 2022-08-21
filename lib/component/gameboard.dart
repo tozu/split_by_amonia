@@ -45,7 +45,6 @@ class GameBoard extends PositionComponent {
     add(_realMaze);
     add(_shadowMaze);
 
-    // TODO(Tobias): move control at right place
     // TODO(Tobias): adjust position of control mode components
 
     add(controlModePanel);

@@ -33,18 +33,36 @@ class ControlModePanel extends PositionComponent {
     ),
   );
 
-  ControlMode controlMode;
-  late Player? activePlayer;
-
   late SpriteGroupComponent enabledPicture;
 
-  ControlModePanel({required this.controlMode});
+  // Control mode
+  ControlMode _controlMode;
+  late TextComponent modeComponent;
 
-  String get controlModeText =>
-      controlMode == ControlMode.single ? 'Single' : 'Together';
+  String get controlModeText {
+    final mode = _controlMode == ControlMode.single ? 'Single' : 'Together';
+    return 'Mode: $mode';
+  }
 
-  // TODO(any): clarify player type name
-  String get playerText => activePlayer is ShadowPlayer ? '1' : '2';
+  // player name
+  Player? _activePlayer;
+
+  final Vector2 playerNamePosition = Vector2(12.0, 32.0);
+  late TextComponent playerNameComponent;
+
+  String get activePlayerText {
+    final activePlayer = _activePlayer == null
+        ? ''
+        // TODO(any): clarify player type name
+        : _activePlayer is ShadowPlayer
+            ? '1'
+            : '2';
+
+    return 'Player $activePlayer';
+  }
+
+  ControlModePanel({required ControlMode controlMode})
+      : _controlMode = controlMode;
 
   @override
   Future<void> onLoad() async {
@@ -62,27 +80,61 @@ class ControlModePanel extends PositionComponent {
 
     enabledPicture.current = ControlState.disabled;
 
+    modeComponent = createTextComponent(
+      controlModeText,
+      Vector2(size.x / 2, 32.0),
+    );
+
+    playerNameComponent = createTextComponent(
+      activePlayerText,
+      playerNamePosition,
+    );
+
     addAll([
       // TODO(Tobias): move to right positions
       enabledPicture,
-      TextComponent(text: 'Mode: $controlModeText', textRenderer: _regular)
-        ..anchor = Anchor.topCenter
-        ..x = size.x / 2
-        ..y = 32.0,
-      if (controlMode == ControlMode.single) ...[
-        TextComponent(text: 'Player $playerText', textRenderer: _regular)
-          ..anchor = Anchor.topCenter
-          ..x = size.x / 2
-          ..y = 32.0,
-      ],
+      modeComponent,
+      playerNameComponent,
     ]);
   }
 
   void updateControlMode({required ControlMode mode, Player? player}) {
-    enabledPicture.current = mode == ControlMode.single
+    _controlMode = mode;
+
+    enabledPicture.current = _controlMode == ControlMode.single
         ? ControlState.enabled
         : ControlState.disabled;
 
-    activePlayer = player;
+    updateTextComponent(modeComponent, controlModeText);
+
+    if (player != null) {
+      _updateActivePlayer(player);
+    }
+  }
+
+  void _updateActivePlayer(Player player) {
+    _activePlayer = player;
+
+    if (_activePlayer == null) {
+      // hide Player name
+      remove(playerNameComponent);
+    } else {
+      playerNameComponent = createTextComponent(
+        activePlayerText,
+        playerNamePosition,
+      );
+      // updateTextComponent(playerNameComponent, activePlayerText);
+    }
+  }
+
+  void updateTextComponent(TextComponent component, String text) {
+    component.text = text;
+  }
+
+  TextComponent createTextComponent(String text, Vector2 position) {
+    return TextComponent(text: text, textRenderer: _regular)
+      ..anchor = Anchor.topCenter
+      ..x = position.x //size.x / 2
+      ..y = position.y; //32.0;
   }
 }
