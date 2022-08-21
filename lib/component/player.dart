@@ -6,9 +6,8 @@ import 'package:split/component/PlayerBorder.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/tile.dart';
 import 'package:split/data/player_sprites_path.dart';
-import 'package:split/utils/utils.dart';
-
 import 'package:split/my_game.dart';
+import 'package:split/utils/utils.dart';
 
 enum Direction {
   north,
@@ -85,17 +84,20 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
     // currently in manual mode -> deactivates the other player temporarily,
     // so it does not move
-    if (!active) {
-      return;
-    }
+    // TODO(Tobias): fix logic
+    // if (!active) {
+    //   return;
+    // }
 
-    if (_crashing) {
-      _handleCrash();
-    } else if (_moveDirection != null) {
-      _handleMovement();
-      _handleMovementAnimation(moveDirection: _moveDirection!);
-    } else if (_boarderReached) {
-      handleBoarder();
+    if (active) {
+      if (_crashing) {
+        _handleCrash();
+      } else if (_moveDirection != null) {
+        _handleMovement();
+        _handleMovementAnimation(moveDirection: _moveDirection!);
+      } else if (_boarderReached) {
+        handleBoarder();
+      }
     }
   }
 
@@ -184,6 +186,9 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
     _setAnimationState();
   }
+
+  // TODO(tobias): make smarter
+  // void listenToOtherPlayerPosition();
 }
 
 class RealPlayer extends Player {

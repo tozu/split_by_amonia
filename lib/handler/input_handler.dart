@@ -23,6 +23,9 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
     final isUp = event.logicalKey == LogicalKeyboardKey.arrowUp;
     final isDown = event.logicalKey == LogicalKeyboardKey.arrowDown;
 
+    final splitControl = event.logicalKey == LogicalKeyboardKey.keyQ;
+    final dualControl = event.logicalKey == LogicalKeyboardKey.keyW;
+
     final isKeyDown = event is RawKeyDownEvent;
     final isKeyUp = event is RawKeyUpEvent;
 
@@ -35,6 +38,16 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
         movePlayers(direction: Direction.north);
       } else if (isDown) {
         movePlayers(direction: Direction.south);
+      } else if (splitControl) {
+        if (_realPlayer.active && _shadowPlayer.active) {
+          _shadowPlayer.setActivation(false);
+        } else {
+          _realPlayer.setActivation(!_realPlayer.active);
+          _shadowPlayer.setActivation(!_shadowPlayer.active);
+        }
+      } else if (dualControl) {
+        _realPlayer.setActivation(true);
+        _shadowPlayer.setActivation(true);
       }
     } else if (isKeyUp) {
       movePlayers(direction: null);
