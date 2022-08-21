@@ -1,7 +1,10 @@
 import 'package:flame/components.dart';
+import 'package:mini_sprite/mini_sprite.dart';
 import 'package:split/component/gameboard.dart';
 import 'package:split/component/player.dart';
 import 'package:split/component/tile.dart';
+
+import '../assets.dart';
 
 class Maze extends PositionComponent with ParentIsA<GameBoard> {
   static const int mazeWidth = 13;
@@ -20,16 +23,22 @@ class Maze extends PositionComponent with ParentIsA<GameBoard> {
   Future<void>? onLoad() async {
     super.onLoad();
     children.register<Tile>(); //
-    final goalPosition = _getPositionOf((Maze.mazeWidth / 2).floor(), 0);
+    final miniMap = MiniMap.fromDataString(realMazeMapLayout);
 
-    for (var x = 0; x < mazeWidth; x++) {
-      for (var y = 0; y < mazeHeight; y++) {
-        final currentPosition = _getPositionOf(x, y);
-        if (goalPosition == currentPosition) {
-          await add(Tile(MazeType.goal, currentPosition));
-        } else {
-          await add(Tile(MazeType.path, currentPosition));
-        }
+    for (final entry in miniMap.objects.entries) {
+      final miniMapPositionX = entry.key.x;
+      final miniMapPositionY = entry.key.y;
+      final spriteName = entry.value['sprite'] as String;
+      //for (var x = 0; x < mazeWidth; x++) {
+      //for (var y = 0; y < mazeHeight; y++) {
+      final currentPosition =
+          _getPositionOf(miniMapPositionX, miniMapPositionY);
+      if (spriteName == "wall") {
+        await add(Tile(MazeType.wall, currentPosition));
+      } else if (spriteName == "goal") {
+        await add(Tile(MazeType.goal, currentPosition));
+      } else {
+        await add(Tile(MazeType.path, currentPosition));
       }
     }
   }
