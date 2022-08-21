@@ -137,16 +137,26 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   void _handleMovementAnimation({required Direction moveDirection}) {
-    // TODO(any): fix animation
-
     switch (moveDirection) {
       case Direction.north:
+      // if (!isFlippedVertically) {
+      //   flipVertically();
+      // }
+      // break;
       case Direction.south:
-        flipVertically();
-        break;
+      // if (isFlippedVertically) {
+      //   flipVertically();
+      // }
+      // break;
       case Direction.east:
+        if (!isFlippedHorizontally) {
+          flipHorizontally();
+        }
+        break;
       case Direction.west:
-        flipHorizontally();
+        if (isFlippedHorizontally) {
+          flipHorizontally();
+        }
         break;
     }
   }
@@ -168,13 +178,20 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   bool _isLegalMove(Vector2 nextPosition) {
-    return border.containsPoint(nextPosition) &&
-        !parent.children.query<Tile>().any(
-          (tile) {
-            return tile.containsPoint(nextPosition) &&
-                tile.current == MazeType.wall;
-          },
-        );
+    if (!border.containsPoint(nextPosition)) {
+      return false;
+    }
+
+    if (!parent.containsPoint(nextPosition)) {
+      return false;
+    }
+
+    for (final tile in parent.children.query<Tile>()) {
+      if (tile.containsPoint(nextPosition) && tile.current == MazeType.wall) {
+        return false;
+      }
+    }
+    return true;
   }
 
   void _movePlayerPosition(Vector2 deltaPosition) {
