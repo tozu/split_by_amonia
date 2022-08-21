@@ -4,6 +4,7 @@ import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:split/component/player.dart';
 import 'package:split/component/shadow_player.dart';
+import 'package:split/component/timer_until_failure.dart';
 
 enum ControlState {
   enabled,
@@ -17,6 +18,8 @@ enum ControlMode {
 
 class ControlModePanel extends PositionComponent {
   static const _controlStateSize = 28.0;
+
+  late TimerUntilFailure myTimer;
 
   final _regular = TextPaint(
     style: TextStyle(
@@ -88,6 +91,9 @@ class ControlModePanel extends PositionComponent {
       _enabledIcon,
       _modeComponent,
     ]);
+
+    myTimer = TimerUntilFailure(240);
+    add(myTimer);
   }
 
   void updateControlMode({required ControlMode mode, Player? player}) {
@@ -134,5 +140,9 @@ class ControlModePanel extends PositionComponent {
   TextComponent _createTextComponent(String text, Vector2 position) {
     return TextComponent(text: text, textRenderer: _regular)
       ..position = position;
+  }
+
+  void resetTimer(double duration) {
+    myTimer.timer.reset();
   }
 }

@@ -27,12 +27,12 @@ class GameBoard extends PositionComponent {
 
   // TODO(any): add randomization for loading mazes
   String get realMaze {
-    return realMazeMapLayout;
+    return realMazeMapLayoutLevel1;
   }
 
   String get shadowMaze {
     // TODO(any): add shadow maze
-    return realMazeMapLayout;
+    return shadowMazeMapLayoutLevel1;
   }
 
   @override
@@ -45,9 +45,7 @@ class GameBoard extends PositionComponent {
     final startPosition = Vector2(50, 50);
 
     _realMaze = Maze(position: startPosition, asset: realMaze);
-
     _realMaze.setPlayer(realPlayer);
-    _realMaze.setLevel(realMazeMapLayoutLevel1);
 
     _shadowMaze = Maze(
       position: Vector2(
@@ -58,7 +56,6 @@ class GameBoard extends PositionComponent {
     );
 
     _shadowMaze.setPlayer(shadowPlayer);
-    _shadowMaze.setLevel(shadowMazeMapLayoutLevel1);
 
     add(_realMaze);
     add(_shadowMaze);

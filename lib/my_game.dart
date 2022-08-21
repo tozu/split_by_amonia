@@ -1,6 +1,7 @@
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:split/component/gameboard.dart';
+import 'package:split/component/loosing_screen.dart';
 import 'package:split/component/player.dart';
 import 'package:split/component/victory_screen.dart';
 import 'package:split/handler/audio_handler.dart';
@@ -14,8 +15,9 @@ class MyGame extends FlameGame
         HasKeyboardHandlerComponents {
   late Player realPlayer;
   late Player shadowPlayer;
-  bool winningState = false;
   bool loosingState = false;
+  bool winningState = false;
+  bool lost = false;
   bool won = false;
   final audioHandler = AudioHandler();
 
@@ -27,6 +29,11 @@ class MyGame extends FlameGame
       await audioHandler.playWinning();
       won = true;
       add(VictoryScreen());
+    }
+    if (loosingState && !lost) {
+      await audioHandler.stopBackgroundMusic();
+      add(LoosingScreen());
+      lost = true;
     }
   }
 
@@ -63,6 +70,8 @@ class MyGame extends FlameGame
   void restart() {
     audioHandler.stopBackgroundMusic();
     removeAll(children);
+    loosingState = false;
+    winningState = false;
     init();
   }
 }
