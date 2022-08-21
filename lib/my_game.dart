@@ -13,6 +13,7 @@ class MyGame extends FlameGame with HasTappables, KeyboardEvents {
 
   late Maze mazeOne;
   late Maze mazeTwo;
+
   final realPlayer = RealPlayer();
   final shadowPlayer = ShadowPlayer();
 

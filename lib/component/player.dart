@@ -82,15 +82,19 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     };
 
     children.register<MoveByEffect>();
+
+    debugMode = true;
   }
 
-  void addEffectOnMove(Vector2 position) {
-    final effect = MoveByEffect(
-      position,
-      EffectController(duration: 0.5, curve: Curves.easeInOutQuart),
-    );
-
-    add(effect);
+  void addEffectOnMove(Vector2 deltaPosition) {
+    final nextPosition = absolutePosition + deltaPosition;
+    if (isLegalMove(nextPosition)) {
+      final effect = MoveByEffect(
+        deltaPosition,
+        EffectController(duration: 0.5, curve: Curves.easeInOutQuart),
+      );
+      add(effect);
+    }
   }
 
   // TODO(any): extract to util class
@@ -140,6 +144,10 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   void handleCrash() {
     position = oldPosition;
     _crashing = false;
+  }
+
+  bool isLegalMove(Vector2 nextPosition) {
+    return border.containsPoint(nextPosition);
   }
 
   void handleMovement() {
