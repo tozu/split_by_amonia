@@ -1,16 +1,7 @@
-# split_by_amonia
+# Split
 
-A new Flutter project.
+Game developed during flame game jam 2022
 
-## Getting Started
+## Description
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The body has lost its soul! The soul has lost its body! Help them to become one again by going back to the location where they got SPLIT. Guide them by using the arrow keys. To switch control between them press ’Q’, and assume control of both with ’W’. But remember: They can’t be too far apart from each other. And hurry, they can’t be away from each other for too long either!
