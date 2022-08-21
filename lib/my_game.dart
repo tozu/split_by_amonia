@@ -28,6 +28,7 @@ class MyGame extends FlameGame
       KeyboardInputHandler(
         realPlayer: realPlayer,
         shadowPlayer: shadowPlayer,
+        panel: gameBoard.controlModePanel,
       ),
     );
 

@@ -1,14 +1,17 @@
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
+import 'package:split/component/control_model_panel.dart';
 import 'package:split/component/player.dart';
 
 class KeyboardInputHandler extends KeyboardListenerComponent {
   final Player _realPlayer;
   final Player _shadowPlayer;
+  final ControlModePanel panel;
 
   KeyboardInputHandler({
     required Player realPlayer,
     required Player shadowPlayer,
+    required this.panel,
   })  : _realPlayer = realPlayer,
         _shadowPlayer = shadowPlayer;
 
@@ -39,13 +42,27 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
       } else if (isDown) {
         movePlayers(direction: Direction.south);
       } else if (splitControl) {
-        if (_realPlayer.isManualModeActive && _shadowPlayer.isManualModeActive) {
+        if (_realPlayer.isManualModeActive &&
+            _shadowPlayer.isManualModeActive) {
+          // enable manual mode for real player
           _shadowPlayer.enableManualMode(false);
+
+          panel.updateControlMode(
+            mode: ControlMode.single,
+            player: _realPlayer,
+          );
         } else {
+          // enable manual mode for shadow player
           _realPlayer.enableManualMode(!_realPlayer.isManualModeActive);
           _shadowPlayer.enableManualMode(!_shadowPlayer.isManualModeActive);
+
+          panel.updateControlMode(
+            mode: ControlMode.single,
+            player: _shadowPlayer,
+          );
         }
       } else if (dualControl) {
+        panel.updateControlMode(mode: ControlMode.together);
         _realPlayer.enableManualMode(true);
         _shadowPlayer.enableManualMode(true);
       }
