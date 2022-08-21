@@ -67,7 +67,6 @@ class GameBoard extends PositionComponent {
     final startPosition = Vector2(50, 50);
 
     _realMaze = Maze(position: startPosition, asset: _realMazeAsset);
-
     _realMaze.setPlayer(realPlayer);
 
     _shadowMaze = Maze(
