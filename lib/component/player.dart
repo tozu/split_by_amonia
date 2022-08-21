@@ -7,6 +7,7 @@ import 'package:split/component/maze.dart';
 import 'package:split/component/player_border.dart';
 import 'package:split/component/tile.dart';
 import 'package:split/data/player_sprites_path.dart';
+import 'package:split/handler/audio_handler.dart';
 import 'package:split/my_game.dart';
 
 enum Direction {
@@ -18,7 +19,9 @@ enum Direction {
 
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     with CollisionCallbacks, ParentIsA<Maze>, HasGameRef<MyGame> {
-  PlayerSpritesPath sprites;
+  final PlayerSpritesPath sprites;
+  final AudioHandler audioHandler;
+
   static const _playerSize = 10.0;
 
   late final PlayerBorder border;
@@ -39,7 +42,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   // Player settings
   bool isManualModeActive = true; // is controlled by player
 
-  Player(this.sprites)
+  Player(this.sprites, this.audioHandler)
       : super(
           current: AnimationState.idle,
           anchor: Anchor.center,
@@ -61,13 +64,18 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   @override
-  void onCollisionStart(Set<Vector2> points, PositionComponent other) {
+  Future<void> onCollisionStart(
+    Set<Vector2> points,
+    PositionComponent other,
+  ) async {
     super.onCollisionStart(points, other);
     if (other is Tile) {
       if (other.current == MazeType.wall) {
+        await audioHandler.playCrash();
         _hasCrashed = true;
       }
     } else if (other is PlayerBorder) {
+      await audioHandler.playTooFar();
       _isBoarderReached = true;
     }
   }
@@ -231,6 +239,4 @@ enum AnimationState {
   movingSide,
   movingUp,
   movingDown,
-  //winning,
-  //crashing,
 }

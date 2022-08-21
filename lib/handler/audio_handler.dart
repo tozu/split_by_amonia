@@ -6,6 +6,7 @@ class AudioHandler {
 
   late AudioPool _step;
   late AudioPool _crash;
+  late AudioPool _tooFar;
 
   // late AudioPool _stepZombie;
   // late AudioPool _stepGhost;
@@ -18,6 +19,7 @@ class AudioHandler {
   // effects
   final String stepSound = 'steps-2.wav';
   final String crashingSound = 'bump.wav'; // 'bump-2.wav';  //or this one
+  final String tooFarSound = 'far-apart.wav';
   // final String stepGhostSound = 'step-ghost.mp3';
   // final String stepZombieSound = 'step-zombie.mp3';
 
@@ -40,20 +42,20 @@ class AudioHandler {
     _playBackground(backgroundMusic, volume: volume);
   }
 
-  void stopBackgroundMusic() {
-    FlameAudio.bgm.stop();
+  Future<void> stopBackgroundMusic() async {
+    await FlameAudio.bgm.stop();
   }
 
-  void _playBackground(String musicFile, {double? volume}) {
-    FlameAudio.bgm.play(musicFile, volume: volume ?? 0.25);
+  Future<void> _playBackground(String musicFile, {double? volume}) async {
+    await FlameAudio.bgm.play(musicFile, volume: volume ?? 0.25);
   }
 
-  void playWinning() {
-    _playBackground(winningSound);
+  Future<void> playWinning() async {
+    await _playBackground(winningSound);
   }
 
-  void playLoosing() {
-    _playBackground(loosingSound);
+  Future<void> playLoosing() async {
+    await _playBackground(loosingSound);
   }
 
   // Sound effects
@@ -68,12 +70,16 @@ class AudioHandler {
   Future<AudioPool> _initializeSoundEffect(String sound) async =>
       AudioPool.create('audio/$sound', maxPlayers: 10);
 
-  void playCrash() {
-    _crash.start();
+  Future<void> playCrash() async {
+    await _crash.start();
   }
 
-  void playStep() {
-    _step.start();
+  Future<void> playStep() async {
+    await _step.start();
+  }
+
+  Future<void> playTooFar() async {
+    await _tooFar.start();
   }
 
   // void playStepZombie() {

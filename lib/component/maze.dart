@@ -10,7 +10,9 @@ class Maze extends PositionComponent with ParentIsA<GameBoard> {
 
   late final Player player;
 
-  Maze({Vector2? position})
+  final String asset;
+
+  Maze({Vector2? position, required this.asset})
       : super(
           position: position ?? Vector2(50, 50),
           size: _getPositionOf(mazeWidth, mazeHeight),
@@ -20,23 +22,25 @@ class Maze extends PositionComponent with ParentIsA<GameBoard> {
   @override
   Future<void>? onLoad() async {
     super.onLoad();
+    children.register<Tile>();
+
+    await _loadMaze(asset: asset);
   }
 
-  void setLevel(String mazeAsset) async {
-    children.register<Tile>(); //
-    final miniMap = MiniMap.fromDataString(mazeAsset);
+  Future<void> _loadMaze({required String asset}) async {
+    final miniMap = MiniMap.fromDataString(asset);
 
     for (final entry in miniMap.objects.entries) {
       final miniMapPositionX = entry.key.x;
       final miniMapPositionY = entry.key.y;
       final spriteName = entry.value['sprite'] as String;
-      //for (var x = 0; x < mazeWidth; x++) {
-      //for (var y = 0; y < mazeHeight; y++) {
+
       final currentPosition =
           _getPositionOf(miniMapPositionX, miniMapPositionY);
-      if (spriteName == "wall") {
+
+      if (spriteName == 'wall') {
         await add(Tile(MazeType.wall, currentPosition));
-      } else if (spriteName == "goal") {
+      } else if (spriteName == 'goal') {
         await add(Tile(MazeType.goal, currentPosition));
       } else {
         await add(Tile(MazeType.path, currentPosition));

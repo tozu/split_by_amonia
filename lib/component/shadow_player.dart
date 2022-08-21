@@ -5,9 +5,10 @@ import 'package:mini_sprite/mini_sprite.dart';
 import 'package:split/assets.dart';
 import 'package:split/component/player.dart';
 import 'package:split/data/player_sprites_path.dart';
+import 'package:split/handler/audio_handler.dart';
 
 class ShadowPlayer extends Player {
-  ShadowPlayer()
+  ShadowPlayer(AudioHandler audioHandler)
       : super(
           // TODO(any): add sprites for shadow player
           PlayerSpritesPath(
@@ -15,6 +16,7 @@ class ShadowPlayer extends Player {
             moving: 'playerMoving',
             crashing: 'playerCrashing',
           ),
+          audioHandler,
         );
 
   @override
