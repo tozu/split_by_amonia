@@ -58,8 +58,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     // TODO(any): Boarder reached animation
 
     children.register<MoveByEffect>();
-
-    debugMode = true;
   }
 
   @override
