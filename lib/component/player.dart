@@ -189,7 +189,7 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   bool _isBothLegalMove(Vector2 deltaPosition) {
-    if (active && other.active) {
+    if (isManualModeActive && other.isManualModeActive) {
       return isLegalMove(deltaPosition) && other.isLegalMove(deltaPosition);
     } else {
       return isLegalMove(deltaPosition);
