@@ -58,7 +58,7 @@ class ShadowPlayer extends Player {
       ),
     };
     position.addListener(() {
-      gameRef.realPlayer.border?.position = position;
+      gameRef.realPlayer.border.position = position;
     });
   }
 }

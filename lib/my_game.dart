@@ -6,8 +6,6 @@ import 'package:split/component/victory_screen.dart';
 import 'package:split/handler/audio_handler.dart';
 import 'package:split/handler/input_handler.dart';
 
-import 'component/winning_animation.dart';
-
 class MyGame extends FlameGame
     with
         HasTappables,
@@ -25,7 +23,7 @@ class MyGame extends FlameGame
     super.update(dt);
     if (winningState && !won) {
       won = true;
-      add(VictoryScreen());
+      add(VictoryScreen(size: Vector2(300, 300)));
     }
   }
 
@@ -39,7 +37,6 @@ class MyGame extends FlameGame
     await audioHandler.init();
     final gameBoard = GameBoard();
 
-    add(WinningAnimation(size: size, position: size / 2));
     await add(gameBoard);
 
     realPlayer = gameBoard.realPlayer;

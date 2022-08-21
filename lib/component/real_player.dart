@@ -54,7 +54,7 @@ class RealPlayer extends Player {
       ),
     };
     position.addListener(() {
-      gameRef.shadowPlayer.border?.position = position;
+      gameRef.shadowPlayer.border.position = position;
     });
   }
 }
