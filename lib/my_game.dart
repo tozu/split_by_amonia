@@ -2,6 +2,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:split/component/gameboard.dart';
 import 'package:split/component/player.dart';
+import 'package:split/handler/audio_handler.dart';
 import 'package:split/handler/input_handler.dart';
 
 class MyGame extends FlameGame
@@ -17,6 +18,9 @@ class MyGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
+    final audioHandler = AudioHandler();
+    await audioHandler.init();
+
     final gameBoard = GameBoard();
 
     await add(gameBoard);
@@ -33,6 +37,8 @@ class MyGame extends FlameGame
     );
 
     camera.viewport = FixedResolutionViewport(gameBoard.size);
+
+    audioHandler.playBackgroundMusic();
   }
 
   @override
@@ -41,5 +47,12 @@ class MyGame extends FlameGame
     if (winningState) {
       print("you've won!");
     }
+  }
+
+  @override
+  void onRemove() async {
+    super.onRemove();
+
+
   }
 }
