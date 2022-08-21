@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +35,8 @@ class VictoryScreen extends PositionComponent with HasGameRef<MyGame> {
           position: size / 2 + Vector2(0, 120),
         ),
         SpriteButtonComponent(
-          button: await Sprite.load('RestartUp.png'),
-          buttonDown: await Sprite.load('RestartDown.png'),
+          button: Sprite(await Flame.images.load('restart.png')),
+          buttonDown: Sprite(await Flame.images.load('restart.png')),
           onPressed: () {
             gameRef.restart();
           },
