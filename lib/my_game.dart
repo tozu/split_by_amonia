@@ -2,6 +2,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:split/component/gameboard.dart';
 import 'package:split/component/player.dart';
+import 'package:split/component/victory_screen.dart';
 import 'package:split/handler/input_handler.dart';
 
 class MyGame extends FlameGame
@@ -14,9 +15,23 @@ class MyGame extends FlameGame
   late Player shadowPlayer;
   bool winningState = false;
   bool loosingState = false;
+  bool won = false;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (winningState && !won) {
+      won = true;
+      add(VictoryScreen());
+    }
+  }
 
   @override
   Future<void> onLoad() async {
+    init();
+  }
+
+  void init() async {
     final gameBoard = GameBoard();
 
     await add(gameBoard);
@@ -35,11 +50,8 @@ class MyGame extends FlameGame
     camera.viewport = FixedResolutionViewport(gameBoard.size);
   }
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-    if (winningState) {
-      print("you've won!");
-    }
+  void restart() {
+    removeAll(children);
+    init();
   }
 }
