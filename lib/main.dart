@@ -10,8 +10,5 @@ void main() {
 
 /*
       TODO:
-        - start menu (tobias)
-        - maze assets (tobias)
         - timer component (joel)
-        - winning animation (Emma)
  */
