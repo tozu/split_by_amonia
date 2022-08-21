@@ -22,6 +22,7 @@ class Tile extends SpriteGroupComponent<MazeType>
     sprites = {
       MazeType.path: Sprite(await Flame.images.load('path.png')),
       MazeType.wall: Sprite(await Flame.images.load('wall.png')),
+      MazeType.goal: Sprite(await Flame.images.load('goal.png')),
     };
 
     current = startingType;
@@ -36,7 +37,6 @@ class Tile extends SpriteGroupComponent<MazeType>
   bool onTapUp(TapUpInfo info) {
     current = (MazeType.path == current) ? MazeType.wall : MazeType.path;
 
-    debugMode = true;
     priority = 1;
 
     info.handled = true;
@@ -47,4 +47,5 @@ class Tile extends SpriteGroupComponent<MazeType>
 enum MazeType {
   path,
   wall,
+  goal,
 }

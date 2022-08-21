@@ -13,9 +13,9 @@ void main() {
         - draw maze(s)
         - generate maze -> background + wall (path is clear)
         - draw player(s)
-        - load sprite for player(s)
-        - impl. movement logic
-        - impl. collision logic
+        - [x] load sprite for player(s)
+        - [x] impl. movement logic
+        - [x] impl. collision logic
         - impl. win/loose logic
 
         nice to have:
