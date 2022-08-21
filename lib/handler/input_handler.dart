@@ -46,21 +46,17 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
             _shadowPlayer.isManualModeActive) {
           // enable manual mode for real player
           _shadowPlayer.enableManualMode(false);
-
-          panel.updateControlMode(
-            mode: ControlMode.single,
-            player: _realPlayer,
-          );
         } else {
           // enable manual mode for shadow player
           _realPlayer.enableManualMode(!_realPlayer.isManualModeActive);
           _shadowPlayer.enableManualMode(!_shadowPlayer.isManualModeActive);
-
-          panel.updateControlMode(
-            mode: ControlMode.single,
-            player: _shadowPlayer,
-          );
         }
+
+        final activePlayer =
+            _realPlayer.isManualModeActive ? _realPlayer : _shadowPlayer;
+
+        // update control panel with player info
+        panel.updateControlMode(mode: ControlMode.single, player: activePlayer);
       } else if (dualControl) {
         panel.updateControlMode(mode: ControlMode.together);
         _realPlayer.enableManualMode(true);
