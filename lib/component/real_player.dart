@@ -2,10 +2,9 @@ import 'package:flame/components.dart';
 import 'package:flame_mini_sprite/flame_mini_sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_sprite/mini_sprite.dart';
+import 'package:split/assets.dart';
 import 'package:split/component/player.dart';
 import 'package:split/data/player_sprites_path.dart';
-
-import '../assets.dart';
 
 class RealPlayer extends Player {
   RealPlayer()
@@ -20,7 +19,7 @@ class RealPlayer extends Player {
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    final miniLibrary = MiniLibrary.fromDataString(ghostLibrary);
+    final miniLibrary = MiniLibrary.fromDataString(zombieLibrary);
     final sprites = await miniLibrary.toSprites(
       color: Colors.white,
       pixelSize: 1,
@@ -28,31 +27,28 @@ class RealPlayer extends Player {
     animations = {
       AnimationState.idle: SpriteAnimation.spriteList(
         [
-          sprites['ghost_front1']!,
+          sprites['zombie_front']!,
         ],
         stepTime: 0.2,
       ),
       AnimationState.movingSide: SpriteAnimation.spriteList(
         [
-          sprites['ghost_side1']!,
-          sprites['ghost_side2']!,
-          sprites['ghost_side3']!,
+          sprites['zombie_side1']!,
+          sprites['zombie_side2']!,
         ],
         stepTime: 0.2,
       ),
       AnimationState.movingUp: SpriteAnimation.spriteList(
         [
-          sprites['ghost_back1']!,
-          sprites['ghost_back2']!,
-          sprites['ghost_back3']!,
+          sprites['zombie_back_walk1']!,
+          sprites['zombie_back_walk2']!,
         ],
         stepTime: 0.2,
       ),
       AnimationState.movingDown: SpriteAnimation.spriteList(
         [
-          sprites['ghost_front1']!,
-          sprites['ghost_front2']!,
-          sprites['ghost_front3']!,
+          sprites['zombie_front_walk1']!,
+          sprites['zombie_front_walk2']!,
         ],
         stepTime: 0.2,
       ),
