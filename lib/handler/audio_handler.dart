@@ -63,6 +63,7 @@ class AudioHandler {
   Future<void> initializeSoundEffects() async {
     _step = await _initializeSoundEffect(stepSound);
     _crash = await _initializeSoundEffect(crashingSound);
+    _tooFar = await _initializeSoundEffect(tooFarSound);
     // _stepZombie = await _initializeSoundEffect(stepGhostSound);
     // _stepGhost = await _initializeSoundEffect(stepZombieSound);
   }
