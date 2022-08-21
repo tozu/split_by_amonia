@@ -8,7 +8,6 @@ import 'package:split/component/player_border.dart';
 import 'package:split/component/tile.dart';
 import 'package:split/data/player_sprites_path.dart';
 import 'package:split/my_game.dart';
-import 'package:split/utils/utils.dart';
 
 enum Direction {
   north,
@@ -58,12 +57,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
     // TODO(any): Boarder reached animation
 
-    animations = {
-      AnimationState.idle: await Utils.loadAnimation(sprites.idle),
-      AnimationState.moving: await Utils.loadAnimation(sprites.moving),
-      AnimationState.crashing: await Utils.loadAnimation(sprites.crashing),
-    };
-
     children.register<MoveByEffect>();
 
     debugMode = true;
@@ -99,7 +92,6 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       _handleCrash();
     } else if (_moveDirection != null) {
       _handleMovement();
-      _handleMovementAnimation(moveDirection: _moveDirection!);
     } else if (_isBoarderReached) {
       _didReachBoarder();
     }
@@ -138,36 +130,37 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     }
   }
 
-  void _handleMovementAnimation({required Direction moveDirection}) {
-    switch (moveDirection) {
-      case Direction.north:
-        break;
-      case Direction.south:
-        break;
-      case Direction.east:
-        if (!isFlippedHorizontally) {
-          flipHorizontally();
-        }
-        break;
-      case Direction.west:
-        if (isFlippedHorizontally) {
-          flipHorizontally();
-        }
-        break;
-    }
-  }
-
   void enableManualMode(bool activation) {
     isManualModeActive = activation;
   }
 
   void _setAnimationState() {
     if (_hasCrashed) {
-      current = AnimationState.crashing;
+      //add vibration effect
+      current = AnimationState.idle;
     } else if (_inMovingState) {
-      current = AnimationState.moving;
+      switch (_moveDirection) {
+        case Direction.north:
+          current = AnimationState.movingUp;
+          break;
+        case Direction.south:
+          current = AnimationState.movingDown;
+          break;
+        case Direction.east:
+          if (!isFlippedHorizontally) {
+            flipHorizontally();
+          }
+          current = AnimationState.movingSide;
+          break;
+        case Direction.west:
+          if (isFlippedHorizontally) {
+            flipHorizontally();
+          }
+          current = AnimationState.movingSide;
+          break;
+      }
     } else if (_winning) {
-      current = AnimationState.winning;
+      //current = AnimationState.winning;
     } else {
       current = AnimationState.idle;
     }
@@ -233,4 +226,11 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 }
 
-enum AnimationState { idle, moving, winning, crashing }
+enum AnimationState {
+  idle,
+  movingSide,
+  movingUp,
+  movingDown,
+  //winning,
+  //crashing,
+}
