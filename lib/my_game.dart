@@ -33,8 +33,10 @@ class MyGame extends FlameGame
     init();
   }
 
-  void init() async {
+  Future<void> init() async {
     await audioHandler.init();
+    await audioHandler.initializeSoundEffects();
+
     final gameBoard = GameBoard();
 
     await add(gameBoard);
@@ -47,6 +49,7 @@ class MyGame extends FlameGame
         realPlayer: realPlayer,
         shadowPlayer: shadowPlayer,
         panel: gameBoard.controlModePanel,
+        audio: audioHandler,
       ),
     );
 
@@ -59,10 +62,5 @@ class MyGame extends FlameGame
     audioHandler.stopBackgroundMusic();
     removeAll(children);
     init();
-  }
-
-  @override
-  void onRemove() async {
-    super.onRemove();
   }
 }
