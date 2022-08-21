@@ -66,9 +66,6 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
         _shadowPlayer.enableManualMode(true);
       }
 
-      // play step sound
-      audio.playStep();
-
     } else if (isKeyUp) {
       movePlayers(direction: null);
     }
@@ -77,6 +74,11 @@ class KeyboardInputHandler extends KeyboardListenerComponent {
   }
 
   void movePlayers({required Direction? direction}) {
+    if (direction != null) {
+      // play step sound
+      audio.playStep();
+    }
+
     _realPlayer.moveToDirection(direction: direction);
     _shadowPlayer.moveToDirection(direction: direction);
   }
