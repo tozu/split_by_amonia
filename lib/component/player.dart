@@ -2,10 +2,13 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
+import 'package:split/component/PlayerBorder.dart';
 import 'package:split/component/maze.dart';
 import 'package:split/component/tile.dart';
 import 'package:split/data/player_sprites_path.dart';
 import 'package:split/utils/utils.dart';
+
+import 'package:split/my_game.dart';
 
 enum Direction {
   north,
@@ -15,14 +18,16 @@ enum Direction {
 }
 
 abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
-    with CollisionCallbacks, ParentIsA<Maze> {
+    with CollisionCallbacks, ParentIsA<Maze>, HasGameRef<MyGame> {
   // TODO(Tobias): extract moving into separate class
-
   PlayerSpritesPath sprites;
   static const _playerSize = 10.0;
 
+  late PlayerBorder border;
+
   bool _crashing = false;
   final bool _winning = false;
+  bool _boarderReached = false;
 
   Direction? _moveDirection;
 
@@ -31,6 +36,10 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
 
   // Previous position (for collision calculation)
   late Vector2 _oldPosition;
+
+  // Player settings
+  bool active = true; // is controlled by player
+  int distance2other = 0; //
 
   Player(this.sprites)
       : super(
@@ -44,7 +53,9 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   Future<void> onLoad() async {
     super.onLoad();
     add(RectangleHitbox());
-
+    border = PlayerBorder(player: this);
+    parent.add(border);
+    // TODO: Boarderreached animation
     animations = {
       AnimationState.idle: await Utils.loadAnimation(sprites.idle),
       AnimationState.moving: await Utils.loadAnimation(sprites.moving),
@@ -63,6 +74,8 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
       if (other.current == MazeType.wall) {
         _crashing = true;
       }
+    } else if (other is PlayerBorder) {
+      _boarderReached = true;
     }
   }
 
@@ -70,12 +83,25 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   void update(double dt) {
     super.update(dt);
 
+    // currently in manual mode -> deactivates the other player temporarily,
+    // so it does not move
+    if (!active) {
+      return;
+    }
+
     if (_crashing) {
       _handleCrash();
     } else if (_moveDirection != null) {
       _handleMovement();
       _handleMovementAnimation(moveDirection: _moveDirection!);
+    } else if (_boarderReached) {
+      handleBoarder();
     }
+  }
+
+  void handleBoarder() {
+    position = _oldPosition;
+    _boarderReached = false;
   }
 
   void _handleCrash() {
@@ -123,6 +149,10 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     }
   }
 
+  void setActivation(bool activation) {
+    active = activation;
+  }
+
   void _setAnimationState() {
     if (_crashing) {
       current = AnimationState.crashing;
@@ -165,6 +195,14 @@ class RealPlayer extends Player {
             crashing: 'playerCrashing',
           ),
         );
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    position.addListener(() {
+      gameRef.shadowPlayer.border.position = position;
+    });
+  }
 }
 
 class ShadowPlayer extends Player {
@@ -177,6 +215,14 @@ class ShadowPlayer extends Player {
             crashing: 'playerCrashing',
           ),
         );
+
+  @override
+  Future<void> onLoad() async {
+    super.onLoad();
+    position.addListener(() {
+      gameRef.realPlayer.border.position = position;
+    });
+  }
 }
 
 enum AnimationState { idle, moving, winning, crashing }
