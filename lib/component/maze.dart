@@ -19,7 +19,7 @@ class Maze extends PositionComponent with ParentIsA<GameBoard> {
   @override
   Future<void>? onLoad() async {
     super.onLoad();
-
+    children.register<Tile>(); //
     for (var x = 0; x < mazeWidth; x++) {
       for (var y = 0; y < mazeHeight; y++) {
         // TODO(any): generate/load maze with wall + path

@@ -2,8 +2,8 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/animation.dart';
-import 'package:split/component/PlayerBorder.dart';
 import 'package:split/component/maze.dart';
+import 'package:split/component/player_border.dart';
 import 'package:split/component/tile.dart';
 import 'package:split/data/player_sprites_path.dart';
 import 'package:split/my_game.dart';
@@ -167,12 +167,23 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
     }
   }
 
-  void _movePlayerPosition(Vector2 moveTo) {
-    if (children.query<MoveByEffect>().isEmpty) {
+  bool _isLegalMove(Vector2 nextPosition) {
+    return border.containsPoint(nextPosition) &&
+        !parent.children.query<Tile>().any(
+          (tile) {
+            return tile.containsPoint(nextPosition) &&
+                tile.current == MazeType.wall;
+          },
+        );
+  }
+
+  void _movePlayerPosition(Vector2 deltaPosition) {
+    if (children.query<MoveByEffect>().isEmpty &&
+        _isLegalMove(absolutePosition + deltaPosition)) {
       _oldPosition = position.clone();
 
       final effect = MoveByEffect(
-        moveTo,
+        deltaPosition,
         EffectController(duration: 0.5, curve: Curves.easeInOutQuart),
       );
 
