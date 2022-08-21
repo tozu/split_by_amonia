@@ -64,18 +64,14 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   @override
-  Future<void> onCollisionStart(
-    Set<Vector2> points,
-    PositionComponent other,
-  ) async {
+  void onCollisionStart(Set<Vector2> points, PositionComponent other) {
     super.onCollisionStart(points, other);
     if (other is Tile) {
       if (other.current == MazeType.wall) {
-        await audioHandler.playCrash();
         _hasCrashed = true;
       }
     } else if (other is PlayerBorder) {
-      await audioHandler.playTooFar();
+      audioHandler.playTooFar();
       _isBoarderReached = true;
     }
   }
@@ -109,6 +105,8 @@ abstract class Player extends SpriteAnimationGroupComponent<AnimationState>
   }
 
   void _handleCrash() {
+    audioHandler.playCrash();
+
     children.query<MoveByEffect>().forEach((element) {
       element.removeFromParent();
     });

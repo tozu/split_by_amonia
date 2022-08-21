@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'package:split/component/gameboard.dart';
 import 'package:split/component/loosing_screen.dart';
 import 'package:split/component/player.dart';
+import 'package:split/component/start_component.dart';
 import 'package:split/component/victory_screen.dart';
 import 'package:split/handler/audio_handler.dart';
 import 'package:split/handler/input_handler.dart';
@@ -28,7 +29,7 @@ class MyGame extends FlameGame
       await audioHandler.stopBackgroundMusic();
       await audioHandler.playWinning();
       won = true;
-      add(VictoryScreen());
+      add(VictoryScreen(size: Vector2(300, 300)));
     }
     if (loosingState && !lost) {
       await audioHandler.stopBackgroundMusic();
@@ -39,7 +40,7 @@ class MyGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    init();
+    add(StartScreen());
   }
 
   Future<void> init() async {
@@ -64,7 +65,7 @@ class MyGame extends FlameGame
 
     camera.viewport = FixedResolutionViewport(gameBoard.size);
 
-    // audioHandler.playBackgroundMusic();
+    audioHandler.playBackgroundMusic();
   }
 
   void restart() {

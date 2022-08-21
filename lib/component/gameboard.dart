@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:split/assets.dart';
 import 'package:split/component/control_model_panel.dart';
@@ -26,17 +28,37 @@ class GameBoard extends PositionComponent {
   GameBoard({required this.audio}) : super(priority: -1);
 
   // TODO(any): add randomization for loading mazes
-  String get realMaze {
-    return realMazeMapLayoutLevel1;
+
+  int get level {
+    final random = Random();
+    const min = 1;
+    const max = 2;
+    return min + random.nextInt(max - min);
   }
 
-  String get shadowMaze {
-    // TODO(any): add shadow maze
-    return shadowMazeMapLayoutLevel1;
+  String realMazeLevel(int level) {
+    switch (level) {
+      case 1:
+        return realMazeMapLayoutLevel1;
+      default:
+        return realMazeMapLayoutLevel2;
+    }
+  }
+
+  String shadowMazeLevel(int level) {
+    switch (level) {
+      case 1:
+        return shadowMazeMapLayoutLevel1;
+      default:
+        return shadowMazeMapLayoutLevel2;
+    }
   }
 
   @override
   Future<void> onLoad() async {
+    final _realMazeAsset = realMazeLevel(level);
+    final _shadowMazeAsset = shadowMazeLevel(level);
+
     final realPlayer = RealPlayer(audio);
     final shadowPlayer = ShadowPlayer(audio);
 
@@ -44,7 +66,7 @@ class GameBoard extends PositionComponent {
     shadowPlayer.other = realPlayer;
     final startPosition = Vector2(50, 50);
 
-    _realMaze = Maze(position: startPosition, asset: realMaze);
+    _realMaze = Maze(position: startPosition, asset: _realMazeAsset);
     _realMaze.setPlayer(realPlayer);
 
     _shadowMaze = Maze(
@@ -52,7 +74,7 @@ class GameBoard extends PositionComponent {
         _realMaze.position.x + _realMaze.width + _mazeGap,
         _realMaze.position.y,
       ),
-      asset: shadowMaze,
+      asset: _shadowMazeAsset,
     );
 
     _shadowMaze.setPlayer(shadowPlayer);
