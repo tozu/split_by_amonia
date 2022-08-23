@@ -35,7 +35,7 @@ Made by Marit and Emma using [MiniSprites](https://minisprit.es)
 
 #### Audio:
   
-  Made by Mikal - thank you! I (tobias)/we are sorry we used so few... we had planned to a lot more sound effects (see [here)[https://github.com/tozu/split_by_amonia/tree/main/assets/audio]) but time ran out.....
+  Made by Mikal - thank you! I (tobias)/we are sorry we used so few... we had planned to a lot more sound effects (see [here][https://github.com/tozu/split_by_amonia/tree/main/assets/audio]) but time ran out.....
 
   Background audio in source code
   - https://github.com/tozu/split_by_amonia/blob/main/lib/my_game.dart#L68
