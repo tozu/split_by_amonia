@@ -6,7 +6,7 @@ Developed during flame Game Jam 2022
 
 The body has lost its soul! The soul has lost its body! Help them to become one again by going back to the location where they got SPLIT. Guide them by using the arrow keys. To switch control between them press ’Q’, and assume control of both with ’W’. But remember: They can’t be too far apart from each other. And hurry, they can’t be away from each other for too long either!
 
-Playable on Github pages:  http://tozu.github.io/split_by_amonia/
+Playable on Github pages:  https://tozu.github.io/split_by_amonia/
 
 itch.io page: https://tozu.itch.io/split
 
@@ -18,24 +18,24 @@ itch.io page: https://tozu.itch.io/split
 
 
 ## Contributors:
-- https://emmalindmark.itch.io/ (Dev + Game design)
-- https://joelaas.itch.io/​ (Dev) Marit (Game design)
-- Marit (Game design)
-- Mikal (sound effects)
+- [emmalindmark](https://emmalindmark.itch.io/) (Dev + Game design)
+- [joelaas](https://joelaas.itch.io/) (Dev) Marit (Game design)
+- [pizzamargaritha93](https://pizzamargaritha93.itch.io/) (Game design)
+- [mekal](https://mekal.itch.io/) (sound effects)
 
 ### Features:
 
 #### Graphics:
 
-Made by Marit and Emma using [MiniSprites](https://minisprit.es)
+Made by [pizzamargaritha93](https://pizzamargaritha93.itch.io/) and [emmalindmark](https://emmalindmark.itch.io/)  using [MiniSprites](https://minisprit.es)
 
 #### An amazing winning animation :hushed: :boom: :star: 
 
- Made by [Emma](https://emmalindmark.itch.io/) :tada:
+ Made by [emmalindmark](https://emmalindmark.itch.io/) :tada:
 
 #### Audio:
   
-  Made by Mikal - thank you! I (tobias)/we are sorry we used so few... we had planned to a lot more sound effects (see [here](https://github.com/tozu/split_by_amonia/tree/main/assets/audio)) but time ran out.....
+  Made by [mekal](https://mekal.itch.io/) - thank you! I (tozu)/we are sorry we used so few... we had planned to a lot more sound effects (see [here](https://github.com/tozu/split_by_amonia/tree/main/assets/audio)) but time ran out.....
 
   Background audio in source code
   - https://github.com/tozu/split_by_amonia/blob/main/lib/my_game.dart#L68
